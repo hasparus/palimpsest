@@ -89,7 +89,7 @@ function parseConversationFile(filepath: string): Conversation | null {
   };
 }
 
-export async function ingestClaudeCode(vaultPath: string, inputPath?: string): Promise<void> {
+export async function ingestClaudeCode(vaultPath: string, inputPath?: string): Promise<number> {
   fs.mkdirSync(vaultPath, { recursive: true });
   let count = 0;
 
@@ -100,7 +100,7 @@ export async function ingestClaudeCode(vaultPath: string, inputPath?: string): P
       count++;
     }
     console.log(`Wrote ${count} Claude Code conversations to ${vaultPath}`);
-    return;
+    return count;
   }
 
   const claudeDir = path.join(os.homedir(), ".claude");
@@ -108,7 +108,7 @@ export async function ingestClaudeCode(vaultPath: string, inputPath?: string): P
 
   if (!fs.existsSync(projectsDir)) {
     console.log("No Claude Code projects found at ~/.claude/projects");
-    return;
+    return 0;
   }
 
   const projectDirs = fs.readdirSync(projectsDir);
@@ -134,4 +134,5 @@ export async function ingestClaudeCode(vaultPath: string, inputPath?: string): P
   }
 
   console.log(`Wrote ${count} Claude Code conversations to ${vaultPath}`);
+  return count;
 }

@@ -172,11 +172,11 @@ title: <conversation title>
 - [x] Add model-family tags (gpt-4, claude-3, etc.)
 - [x] Improve keyword extraction: also check message pairs for programming language detection
 
-### 7. Update sync command
-- [ ] `palimpsest sync` should: ingest all → tag → backlink
-- [ ] After sync, print stats: X conversations, Y new, Z updated
-- [ ] Auto-create vault dir if missing
-- [ ] Print hint: "Run `qmd collection add ./vault --name conversations && qmd embed` to enable search"
+### 7. Update sync command ✅
+- [x] `palimpsest sync` should: ingest all → tag → backlink
+- [x] After sync, print stats: X conversations, Y new, Z updated
+- [x] Auto-create vault dir if missing
+- [x] Print hint: "Run `qmd collection add ./vault --name conversations && qmd embed` to enable search"
 
 ## Progress
 

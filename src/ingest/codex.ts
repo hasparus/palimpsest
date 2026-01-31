@@ -113,7 +113,7 @@ function findJsonlFiles(dir: string): string[] {
   return files;
 }
 
-export async function ingestCodex(vaultPath: string, inputPath?: string): Promise<void> {
+export async function ingestCodex(vaultPath: string, inputPath?: string): Promise<number> {
   fs.mkdirSync(vaultPath, { recursive: true });
 
   if (inputPath) {
@@ -121,17 +121,18 @@ export async function ingestCodex(vaultPath: string, inputPath?: string): Promis
     if (conversation && conversation.messages.length > 0) {
       await writeConversation(conversation, vaultPath);
       console.log(`Wrote 1 Codex conversations to ${vaultPath}`);
+      return 1;
     } else {
       console.log(`Wrote 0 Codex conversations to ${vaultPath}`);
+      return 0;
     }
-    return;
   }
 
   const codexDir = path.join(os.homedir(), ".codex");
 
   if (!fs.existsSync(codexDir)) {
     console.log("No Codex directory found at ~/.codex");
-    return;
+    return 0;
   }
 
   const sessionsDir = path.join(codexDir, "sessions");
@@ -158,4 +159,5 @@ export async function ingestCodex(vaultPath: string, inputPath?: string): Promis
   }
 
   console.log(`Wrote ${count} Codex conversations to ${vaultPath}`);
+  return count;
 }

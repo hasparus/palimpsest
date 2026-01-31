@@ -74,37 +74,39 @@ program
   .option("--claude-web <path>", "Claude.ai export JSON file")
   .action(async (options) => {
     const { vault } = options;
+    const fs = await import("node:fs");
+    
+    fs.mkdirSync(vault, { recursive: true });
+    
     console.log(`Syncing to ${vault}...`);
+    let total = 0;
 
     if (options.chatgpt) {
       console.log("\n--- ChatGPT ---");
       const { ingestChatGPT } = await import("./ingest/chatgpt.js");
-      await ingestChatGPT(options.chatgpt, vault);
+      total += await ingestChatGPT(options.chatgpt, vault);
     }
 
     if (options["claude-web"]) {
       console.log("\n--- Claude Web ---");
       const { ingestClaudeWeb } = await import("./ingest/claude-web.js");
-      await ingestClaudeWeb(options["claude-web"], vault);
+      total += await ingestClaudeWeb(options["claude-web"], vault);
     }
 
     console.log("\n--- Claude Code ---");
     const { ingestClaudeCode } = await import("./ingest/claude-code.js");
-    await ingestClaudeCode(vault);
+    total += await ingestClaudeCode(vault);
 
     console.log("\n--- Codex ---");
     const { ingestCodex } = await import("./ingest/codex.js");
-    await ingestCodex(vault);
-
-    console.log("\n--- Tagging ---");
-    const { tagVault } = await import("./tagger.js");
-    await tagVault(vault);
+    total += await ingestCodex(vault);
 
     console.log("\n--- Backlinking ---");
     const { backlinkVault } = await import("./backlinker.js");
     await backlinkVault(vault);
 
-    console.log("\nSync complete!");
+    console.log(`\nSync complete! ${total} conversations written.`);
+    console.log(`\nTo enable search, run:\n  qmd collection add ${vault} --name conversations && qmd embed`);
   });
 
 program.parse();

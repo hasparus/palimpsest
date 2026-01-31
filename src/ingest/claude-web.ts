@@ -96,7 +96,7 @@ function parseExportData(jsonContent: string): ClaudeWebConversation[] {
 export async function ingestClaudeWeb(
   inputPath: string,
   vaultPath: string
-): Promise<void> {
+): Promise<number> {
   const jsonContent = fs.readFileSync(inputPath, "utf-8");
   const rawConversations = parseExportData(jsonContent);
 
@@ -118,4 +118,5 @@ export async function ingestClaudeWeb(
   }
 
   console.log(`Wrote ${count} conversations to ${vaultPath}`);
+  return count;
 }

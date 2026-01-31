@@ -124,7 +124,7 @@ function parseChatGPTConversation(raw: ChatGPTConversation): Conversation {
 export async function ingestChatGPT(
   inputPath: string,
   vaultPath: string
-): Promise<void> {
+): Promise<number> {
   let jsonContent: string;
 
   if (inputPath.endsWith(".zip")) {
@@ -160,4 +160,5 @@ export async function ingestChatGPT(
   }
 
   console.log(`Wrote ${count} conversations to ${vaultPath}`);
+  return count;
 }
