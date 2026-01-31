@@ -139,13 +139,13 @@ title: <conversation title>
 - [x] `tsconfig.json`
 - [x] Basic CLI entry point with commander
 
-### 2. Fix ChatGPT ingester
-- [ ] Traverse mapping as DAG using parent/children pointers (not Object.entries iteration)
-- [ ] Follow `current_node` to find active branch when there are forks
-- [ ] Filter: skip system role, tool role, empty parts, `content_type !== 'text'` non-user messages
-- [ ] Extract text parts only (skip image/object parts)
-- [ ] Use real `Chat` types from nexus analysis (see format docs above)
-- [ ] Test with: `npx tsx src/cli.ts ingest --source chatgpt --input test-fixtures/chatgpt-export.json --vault ./vault` (create a small fixture file for smoke test)
+### 2. Fix ChatGPT ingester ✅
+- [x] Traverse mapping as DAG using parent/children pointers (not Object.entries iteration)
+- [x] Follow `current_node` to find active branch when there are forks
+- [x] Filter: skip system role, tool role, empty parts, `content_type !== 'text'` non-user messages
+- [x] Extract text parts only (skip image/object parts)
+- [x] Use real `Chat` types from nexus analysis (see format docs above)
+- [x] Test with: `npx tsx src/cli.ts ingest --source chatgpt --input test-fixtures/chatgpt-export.json --vault ./vault` (create a small fixture file for smoke test)
 
 ### 3. Fix Claude Web ingester
 - [ ] Handle `{ conversations: [...] }` wrapper (not bare array)
