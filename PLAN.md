@@ -1,18 +1,14 @@
-# Palimpsest — Unified Conversation Vault + Search
+# Palimpsest — Unified Conversation Vault
 
-Pull all AI conversations into one flat Obsidian vault. Index them for full-text search.
-Expose as MCP server so future AI conversations can search past ones without bloating context.
+Pull all AI conversations into one flat Obsidian vault with tags and backlinks.
+Search is handled by **qmd** (separate tool) — palimpsest just produces the markdown.
 
 ## Prior Art (see .context/)
 
 - **nexus-ai-chat-importer**: Obsidian plugin. Excellent format handling (ChatGPT tree
   traversal, Claude content blocks, artifact versioning, DALL-E). Provider adapter pattern.
-  No search capability.
-- **qmd**: Local search engine for markdown. Hybrid BM25 + vector + LLM reranker.
-  SQLite FTS5 + sqlite-vec. MCP server. Great architecture but heavy (3 GGUF models).
-
-We take nexus's format knowledge + qmd's search-via-MCP idea, but keep it lean:
-SQLite FTS5 only (no vector/LLM models). Fast, zero dependencies beyond better-sqlite3.
+- **qmd**: Local markdown search engine. BM25 + vector + LLM reranker. MCP server.
+  We use qmd to index the vault palimpsest produces — no need to reimplement search.
 
 ## Architecture
 
@@ -28,16 +24,22 @@ palimpsest/
 │   ├── normalize.ts           # Conversation → Markdown with YAML frontmatter
 │   ├── tagger.ts              # auto-tag: source, date, quarter, keyword topics
 │   ├── backlinker.ts          # [[wikilinks]] by shared tags (≥2 overlap, top 5)
-│   ├── search/
-│   │   ├── index.ts           # SQLite FTS5 indexer — index vault .md files
-│   │   └── search.ts          # search(query) → ranked results with snippets
-│   ├── mcp.ts                 # MCP server: search, get, list tools
 │   └── cli.ts                 # CLI entry point
 ├── vault/                     # output .md files (gitignored)
-├── palimpsest.db              # SQLite FTS5 index (gitignored)
 ├── package.json
 └── tsconfig.json
 ```
+
+## Search: use qmd
+
+After syncing, point qmd at the vault:
+```sh
+qmd collection add ./vault --name conversations
+qmd context add qmd://conversations "AI conversation history from ChatGPT, Claude, Codex"
+qmd embed
+qmd query "how did I solve that auth bug?"
+```
+Or add qmd as MCP server in Claude/Amp settings for automatic search.
 
 ## Data Source Formats (from nexus-ai-chat-importer analysis)
 
@@ -165,53 +167,16 @@ title: <conversation title>
 - [ ] Handle both `input_text` and `output_text` content types
 - [ ] Walk `~/.codex/sessions/` and `~/.codex/archived_sessions/` recursively
 
-### 6. Add better-sqlite3 and FTS5 search index
-- [ ] Add `better-sqlite3` dependency (+ `@types/better-sqlite3`)
-- [ ] `src/search/index.ts`: Create `palimpsest.db` with FTS5 virtual table
-  ```sql
-  CREATE VIRTUAL TABLE IF NOT EXISTS conversations_fts USING fts5(
-    id, title, source, date, model, tags, content,
-    tokenize='porter unicode61'
-  );
-  ```
-- [ ] `indexVault(vaultPath, dbPath)`: Read all .md files, parse frontmatter, insert into FTS5
-- [ ] Handle incremental updates: delete + re-insert by id
-- [ ] CLI command: `palimpsest index --vault ./vault`
-
-### 7. Add search command
-- [ ] `src/search/search.ts`: `search(dbPath, query, opts)` → results with snippets
-- [ ] Use FTS5 `snippet()` function for context around matches
-- [ ] Use FTS5 `rank` for relevance scoring (BM25 built-in)
-- [ ] Return: `{ id, title, source, date, score, snippet }[]`
-- [ ] CLI command: `palimpsest search "query" --vault ./vault`
-- [ ] Options: `-n` limit (default 10), `--source` filter, `--json` output
-
-### 8. MCP server
-- [ ] `src/mcp.ts`: MCP server using `@modelcontextprotocol/sdk`
-- [ ] Tool: `palimpsest_search` — search conversations by query, return ranked snippets
-- [ ] Tool: `palimpsest_get` — get full conversation by id or filename
-- [ ] Tool: `palimpsest_list` — list conversations, optionally filtered by source/date
-- [ ] Resource: expose vault files as `palimpsest://` URIs
-- [ ] CLI command: `palimpsest mcp` (starts stdio MCP server)
-- [ ] Include usage instructions in tool descriptions so LLMs know when/how to search
-
-### 9. Tagger improvements
+### 6. Tagger improvements
 - [ ] Run tagger after ingest automatically (no separate step needed)
 - [ ] Add model-family tags (gpt-4, claude-3, etc.)
 - [ ] Improve keyword extraction: also check message pairs for programming language detection
 
-### 10. Update sync command
-- [ ] `palimpsest sync` should: ingest all → tag → backlink → index
+### 7. Update sync command
+- [ ] `palimpsest sync` should: ingest all → tag → backlink
 - [ ] After sync, print stats: X conversations, Y new, Z updated
 - [ ] Auto-create vault dir if missing
-
-## .gitignore additions needed
-```
-vault/
-*.db
-*.db-wal
-*.db-shm
-```
+- [ ] Print hint: "Run `qmd collection add ./vault --name conversations && qmd embed` to enable search"
 
 ## Progress
 
