@@ -76,7 +76,7 @@ function extractMessages(
       let nodeId: string | null = rootId;
       while (nodeId && mapping[nodeId]) {
         path.push(nodeId);
-        const children = mapping[nodeId].children;
+        const children: string[] | undefined = mapping[nodeId].children;
         nodeId = children && children.length > 0 ? children[0] : null;
       }
     }
