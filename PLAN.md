@@ -85,8 +85,8 @@ id: <original-conversation-id>
 - [x] Extract conversation metadata
 
 ### 4. Claude Code ingester
-- [ ] Read local `.jsonl` conversation files from `~/.claude/`
-- [ ] Parse message format, extract session metadata
+- [x] Read local `.jsonl` conversation files from `~/.claude/`
+- [x] Parse message format, extract session metadata
 
 ### 5. Codex CLI ingester
 - [ ] Discover Codex local history location

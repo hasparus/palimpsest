@@ -37,6 +37,9 @@ program
       }
       const { ingestClaudeWeb } = await import("./ingest/claude-web.js");
       await ingestClaudeWeb(input, vault);
+    } else if (source === "claude-code") {
+      const { ingestClaudeCode } = await import("./ingest/claude-code.js");
+      await ingestClaudeCode(vault);
     } else {
       console.log(`Source "${source}" not yet implemented`);
     }
