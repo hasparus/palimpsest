@@ -52,9 +52,9 @@ program
   .command("tag")
   .description("Auto-tag conversations in vault")
   .option("--vault <path>", "Vault directory", "./vault")
-  .action((options) => {
-    console.log(`Tagging conversations in ${options.vault}...`);
-    console.log("Not yet implemented");
+  .action(async (options) => {
+    const { tagVault } = await import("./tagger.js");
+    await tagVault(options.vault);
   });
 
 program

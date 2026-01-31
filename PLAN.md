@@ -98,9 +98,9 @@ id: <original-conversation-id>
 - [x] Handle deduplication by conversation ID
 
 ### 7. Tagger
-- [ ] Auto-tag by source
-- [ ] Auto-tag by date (year, quarter)
-- [ ] Extract topic tags from conversation content (keyword-based, no LLM needed)
+- [x] Auto-tag by source
+- [x] Auto-tag by date (year, quarter)
+- [x] Extract topic tags from conversation content (keyword-based, no LLM needed)
 
 ### 8. Backlinker
 - [ ] Find related conversations by overlapping tags/topics
