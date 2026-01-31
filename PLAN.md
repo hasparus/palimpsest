@@ -149,13 +149,13 @@ title: <conversation title>
 - [x] Use real `Chat` types from nexus analysis (see format docs above)
 - [x] Test with: `npx tsx src/cli.ts ingest --source chatgpt --input test-fixtures/chatgpt-export.json --vault ./vault` (create a small fixture file for smoke test)
 
-### 3. Fix Claude Web ingester
-- [ ] Handle `{ conversations: [...] }` wrapper (not bare array)
-- [ ] Also handle bare array for compatibility
-- [ ] Parse content blocks: extract `.text` from text blocks, `.thinking` from thinking blocks
-- [ ] Skip tool_use and tool_result blocks (artifact noise)
-- [ ] Include thinking in output as blockquote (`> *thinking:* ...`)
-- [ ] Test with fixture
+### 3. Fix Claude Web ingester ✅
+- [x] Handle `{ conversations: [...] }` wrapper (not bare array)
+- [x] Also handle bare array for compatibility
+- [x] Parse content blocks: extract `.text` from text blocks, `.thinking` from thinking blocks
+- [x] Skip tool_use and tool_result blocks (artifact noise)
+- [x] Include thinking in output as blockquote (`> *thinking:* ...`)
+- [x] Test with fixture
 
 ### 4. Fix Claude Code ingester
 - [ ] Handle content as `{type, text}[]` blocks — extract text blocks, format thinking blocks
