@@ -1,0 +1,5 @@
+node_modules/
+vault/
+dist/
+*.zip
+*.json.bak
