@@ -81,8 +81,8 @@ id: <original-conversation-id>
 - [x] Extract title, model, create_time
 
 ### 3. Claude Web ingester
-- [ ] Parse Claude.ai export JSON format
-- [ ] Extract conversation metadata
+- [x] Parse Claude.ai export JSON format
+- [x] Extract conversation metadata
 
 ### 4. Claude Code ingester
 - [ ] Read local `.jsonl` conversation files from `~/.claude/`

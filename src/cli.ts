@@ -30,6 +30,13 @@ program
       }
       const { ingestChatGPT } = await import("./ingest/chatgpt.js");
       await ingestChatGPT(input, vault);
+    } else if (source === "claude-web") {
+      if (!input) {
+        console.error("Error: --input is required for claude-web source");
+        process.exit(1);
+      }
+      const { ingestClaudeWeb } = await import("./ingest/claude-web.js");
+      await ingestClaudeWeb(input, vault);
     } else {
       console.log(`Source "${source}" not yet implemented`);
     }
