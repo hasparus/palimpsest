@@ -59,10 +59,17 @@ export function conversationToMarkdown(conversation: Conversation): string {
   return lines.join("\n");
 }
 
+const writtenIds = new Set<string>();
+
 export async function writeConversation(
   conversation: Conversation,
   vaultPath: string
-): Promise<string> {
+): Promise<string | null> {
+  if (writtenIds.has(conversation.id)) {
+    return null;
+  }
+  writtenIds.add(conversation.id);
+
   const filename = generateFilename(conversation);
   const filepath = path.join(vaultPath, filename);
 
@@ -70,4 +77,8 @@ export async function writeConversation(
   fs.writeFileSync(filepath, markdown, "utf-8");
 
   return filepath;
+}
+
+export function resetDeduplication(): void {
+  writtenIds.clear();
 }

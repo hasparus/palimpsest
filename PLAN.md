@@ -93,9 +93,9 @@ id: <original-conversation-id>
 - [x] Parse conversation format
 
 ### 6. Normalizer
-- [ ] Convert all sources to unified Markdown with YAML frontmatter
-- [ ] Filename: `{date}_{source}_{slug}.md` (flat, no subdirs)
-- [ ] Handle deduplication by conversation ID
+- [x] Convert all sources to unified Markdown with YAML frontmatter
+- [x] Filename: `{date}_{source}_{slug}.md` (flat, no subdirs)
+- [x] Handle deduplication by conversation ID
 
 ### 7. Tagger
 - [ ] Auto-tag by source
