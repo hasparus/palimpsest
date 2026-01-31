@@ -3,3 +3,8 @@ vault/
 dist/
 *.zip
 *.json.bak
+*.db
+*.db-wal
+*.db-shm
+ralph.log
+test-fixtures/
