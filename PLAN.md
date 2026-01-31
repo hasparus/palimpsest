@@ -108,13 +108,13 @@ id: <original-conversation-id>
 - [x] Avoid circular-only links (A↔B with nothing else)
 
 ### 9. CLI glue
-- [ ] `palimpsest ingest --source chatgpt --input ./export.zip --vault ./vault`
-- [ ] `palimpsest ingest --source claude-web --input ./export.json --vault ./vault`
-- [ ] `palimpsest ingest --source claude-code --vault ./vault`
-- [ ] `palimpsest ingest --source codex --vault ./vault`
-- [ ] `palimpsest tag --vault ./vault`
-- [ ] `palimpsest backlink --vault ./vault`
-- [ ] `palimpsest sync --vault ./vault` (all sources + tag + backlink)
+- [x] `palimpsest ingest --source chatgpt --input ./export.zip --vault ./vault`
+- [x] `palimpsest ingest --source claude-web --input ./export.json --vault ./vault`
+- [x] `palimpsest ingest --source claude-code --vault ./vault`
+- [x] `palimpsest ingest --source codex --vault ./vault`
+- [x] `palimpsest tag --vault ./vault`
+- [x] `palimpsest backlink --vault ./vault`
+- [x] `palimpsest sync --vault ./vault` (all sources + tag + backlink)
 
 ## Progress
 

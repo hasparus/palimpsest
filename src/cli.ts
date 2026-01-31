@@ -70,9 +70,41 @@ program
   .command("sync")
   .description("Run all ingesters, then tag and backlink")
   .option("--vault <path>", "Vault directory", "./vault")
-  .action((options) => {
-    console.log(`Syncing to ${options.vault}...`);
-    console.log("Not yet implemented");
+  .option("--chatgpt <path>", "ChatGPT export ZIP or JSON file")
+  .option("--claude-web <path>", "Claude.ai export JSON file")
+  .action(async (options) => {
+    const { vault } = options;
+    console.log(`Syncing to ${vault}...`);
+
+    if (options.chatgpt) {
+      console.log("\n--- ChatGPT ---");
+      const { ingestChatGPT } = await import("./ingest/chatgpt.js");
+      await ingestChatGPT(options.chatgpt, vault);
+    }
+
+    if (options["claude-web"]) {
+      console.log("\n--- Claude Web ---");
+      const { ingestClaudeWeb } = await import("./ingest/claude-web.js");
+      await ingestClaudeWeb(options["claude-web"], vault);
+    }
+
+    console.log("\n--- Claude Code ---");
+    const { ingestClaudeCode } = await import("./ingest/claude-code.js");
+    await ingestClaudeCode(vault);
+
+    console.log("\n--- Codex ---");
+    const { ingestCodex } = await import("./ingest/codex.js");
+    await ingestCodex(vault);
+
+    console.log("\n--- Tagging ---");
+    const { tagVault } = await import("./tagger.js");
+    await tagVault(vault);
+
+    console.log("\n--- Backlinking ---");
+    const { backlinkVault } = await import("./backlinker.js");
+    await backlinkVault(vault);
+
+    console.log("\nSync complete!");
   });
 
 program.parse();
