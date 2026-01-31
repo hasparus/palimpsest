@@ -157,10 +157,10 @@ title: <conversation title>
 - [x] Include thinking in output as blockquote (`> *thinking:* ...`)
 - [x] Test with fixture
 
-### 4. Fix Claude Code ingester
-- [ ] Handle content as `{type, text}[]` blocks — extract text blocks, format thinking blocks
-- [ ] More robust JSONL parsing (skip malformed lines gracefully)
-- [ ] Use cwd from first entry as title context if no better title
+### 4. Fix Claude Code ingester ✅
+- [x] Handle content as `{type, text}[]` blocks — extract text blocks, format thinking blocks
+- [x] More robust JSONL parsing (skip malformed lines gracefully)
+- [x] Use cwd from first entry as title context if no better title
 
 ### 5. Fix Codex ingester
 - [ ] Filter `<environment_context>` XML content from messages

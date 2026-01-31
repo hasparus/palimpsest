@@ -39,7 +39,7 @@ program
       await ingestClaudeWeb(input, vault);
     } else if (source === "claude-code") {
       const { ingestClaudeCode } = await import("./ingest/claude-code.js");
-      await ingestClaudeCode(vault);
+      await ingestClaudeCode(vault, input);
     } else if (source === "codex") {
       const { ingestCodex } = await import("./ingest/codex.js");
       await ingestCodex(vault);

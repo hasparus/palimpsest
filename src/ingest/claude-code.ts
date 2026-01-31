@@ -17,14 +17,20 @@ interface ClaudeCodeEntry {
   };
 }
 
-function extractContent(content: string | { type: string; text?: string }[]): string {
+function extractContent(content: string | { type: string; text?: string; thinking?: string }[]): string {
   if (typeof content === "string") {
     return content;
   }
-  return content
-    .filter((part) => part.type === "text" && part.text)
-    .map((part) => part.text!)
-    .join("\n");
+  
+  const parts: string[] = [];
+  for (const block of content) {
+    if (block.type === "text" && block.text) {
+      parts.push(block.text);
+    } else if (block.type === "thinking" && block.thinking) {
+      parts.push(`> *thinking:* ${block.thinking}`);
+    }
+  }
+  return parts.join("\n\n");
 }
 
 function parseConversationFile(filepath: string): Conversation | null {
@@ -65,9 +71,14 @@ function parseConversationFile(filepath: string): Conversation | null {
 
   if (messages.length === 0) return null;
 
-  const title =
-    messages[0].content.slice(0, 60).replace(/\n/g, " ") +
-    (messages[0].content.length > 60 ? "..." : "");
+  const firstMessageText = messages[0].content.replace(/^>\s*\*thinking:\*.*\n*/gm, "").trim();
+  let title = firstMessageText.slice(0, 60).replace(/\n/g, " ");
+  if (firstMessageText.length > 60) title += "...";
+  
+  if (cwd) {
+    const projectName = path.basename(cwd);
+    title = `[${projectName}] ${title}`;
+  }
 
   return {
     id: sessionId || path.basename(filepath, ".jsonl"),
@@ -78,7 +89,20 @@ function parseConversationFile(filepath: string): Conversation | null {
   };
 }
 
-export async function ingestClaudeCode(vaultPath: string): Promise<void> {
+export async function ingestClaudeCode(vaultPath: string, inputPath?: string): Promise<void> {
+  fs.mkdirSync(vaultPath, { recursive: true });
+  let count = 0;
+
+  if (inputPath) {
+    const conversation = parseConversationFile(inputPath);
+    if (conversation) {
+      await writeConversation(conversation, vaultPath);
+      count++;
+    }
+    console.log(`Wrote ${count} Claude Code conversations to ${vaultPath}`);
+    return;
+  }
+
   const claudeDir = path.join(os.homedir(), ".claude");
   const projectsDir = path.join(claudeDir, "projects");
 
@@ -87,10 +111,7 @@ export async function ingestClaudeCode(vaultPath: string): Promise<void> {
     return;
   }
 
-  fs.mkdirSync(vaultPath, { recursive: true });
-
   const projectDirs = fs.readdirSync(projectsDir);
-  let count = 0;
 
   for (const projectDir of projectDirs) {
     const projectPath = path.join(projectsDir, projectDir);
