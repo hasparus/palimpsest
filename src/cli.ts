@@ -40,6 +40,9 @@ program
     } else if (source === "claude-code") {
       const { ingestClaudeCode } = await import("./ingest/claude-code.js");
       await ingestClaudeCode(vault);
+    } else if (source === "codex") {
+      const { ingestCodex } = await import("./ingest/codex.js");
+      await ingestCodex(vault);
     } else {
       console.log(`Source "${source}" not yet implemented`);
     }

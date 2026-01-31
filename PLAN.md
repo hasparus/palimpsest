@@ -89,8 +89,8 @@ id: <original-conversation-id>
 - [x] Parse message format, extract session metadata
 
 ### 5. Codex CLI ingester
-- [ ] Discover Codex local history location
-- [ ] Parse conversation format
+- [x] Discover Codex local history location
+- [x] Parse conversation format
 
 ### 6. Normalizer
 - [ ] Convert all sources to unified Markdown with YAML frontmatter
