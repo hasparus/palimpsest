@@ -31,11 +31,15 @@ interface CodexResponseItem {
 
 type CodexEntry = CodexSessionMeta | CodexResponseItem | { type: string };
 
+function stripEnvironmentContext(text: string): string {
+  return text.replace(/<environment_context>[\s\S]*?<\/environment_context>/g, "").trim();
+}
+
 function extractText(content: { type: string; text?: string }[]): string {
   return content
     .filter((c) => c.type === "input_text" || c.type === "output_text" || c.type === "text")
-    .map((c) => c.text || "")
-    .filter((t) => !t.startsWith("<environment_context>"))
+    .map((c) => stripEnvironmentContext(c.text || ""))
+    .filter((t) => t.length > 0)
     .join("\n")
     .trim();
 }
@@ -109,15 +113,26 @@ function findJsonlFiles(dir: string): string[] {
   return files;
 }
 
-export async function ingestCodex(vaultPath: string): Promise<void> {
+export async function ingestCodex(vaultPath: string, inputPath?: string): Promise<void> {
+  fs.mkdirSync(vaultPath, { recursive: true });
+
+  if (inputPath) {
+    const conversation = parseCodexSession(inputPath);
+    if (conversation && conversation.messages.length > 0) {
+      await writeConversation(conversation, vaultPath);
+      console.log(`Wrote 1 Codex conversations to ${vaultPath}`);
+    } else {
+      console.log(`Wrote 0 Codex conversations to ${vaultPath}`);
+    }
+    return;
+  }
+
   const codexDir = path.join(os.homedir(), ".codex");
 
   if (!fs.existsSync(codexDir)) {
     console.log("No Codex directory found at ~/.codex");
     return;
   }
-
-  fs.mkdirSync(vaultPath, { recursive: true });
 
   const sessionsDir = path.join(codexDir, "sessions");
   const archivedDir = path.join(codexDir, "archived_sessions");

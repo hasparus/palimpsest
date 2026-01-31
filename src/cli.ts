@@ -42,7 +42,7 @@ program
       await ingestClaudeCode(vault, input);
     } else if (source === "codex") {
       const { ingestCodex } = await import("./ingest/codex.js");
-      await ingestCodex(vault);
+      await ingestCodex(vault, input);
     } else {
       console.log(`Source "${source}" not yet implemented`);
     }

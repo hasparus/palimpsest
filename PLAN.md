@@ -162,10 +162,10 @@ title: <conversation title>
 - [x] More robust JSONL parsing (skip malformed lines gracefully)
 - [x] Use cwd from first entry as title context if no better title
 
-### 5. Fix Codex ingester
-- [ ] Filter `<environment_context>` XML content from messages
-- [ ] Handle both `input_text` and `output_text` content types
-- [ ] Walk `~/.codex/sessions/` and `~/.codex/archived_sessions/` recursively
+### 5. Fix Codex ingester ✅
+- [x] Filter `<environment_context>` XML content from messages
+- [x] Handle both `input_text` and `output_text` content types
+- [x] Walk `~/.codex/sessions/` and `~/.codex/archived_sessions/` recursively
 
 ### 6. Tagger improvements
 - [ ] Run tagger after ingest automatically (no separate step needed)
