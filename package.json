@@ -1,0 +1,23 @@
+{
+  "name": "palimpsest",
+  "version": "0.1.0",
+  "description": "Pull all AI conversations into one flat Obsidian vault with tags and backlinks",
+  "type": "module",
+  "main": "src/cli.ts",
+  "bin": {
+    "palimpsest": "./src/cli.ts"
+  },
+  "scripts": {
+    "start": "tsx src/cli.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "jszip": "^3.10.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

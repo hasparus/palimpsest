@@ -76,9 +76,9 @@ id: <original-conversation-id>
 - [x] Basic CLI entry point with commander
 
 ### 2. ChatGPT ingester
-- [ ] Parse `conversations.json` from ChatGPT export ZIP
-- [ ] Handle multimodal messages (skip images, keep text)
-- [ ] Extract title, model, create_time
+- [x] Parse `conversations.json` from ChatGPT export ZIP
+- [x] Handle multimodal messages (skip images, keep text)
+- [x] Extract title, model, create_time
 
 ### 3. Claude Web ingester
 - [ ] Parse Claude.ai export JSON format
