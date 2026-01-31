@@ -1,0 +1,135 @@
+import * as fs from "node:fs";
+import * as path from "node:path";
+
+interface FileData {
+  filename: string;
+  filepath: string;
+  title: string;
+  tags: string[];
+  content: string;
+}
+
+function parseFrontMatter(content: string): { tags: string[]; title: string; body: string } | null {
+  const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+  if (!match) return null;
+
+  const yamlStr = match[1];
+  const body = match[2];
+
+  let tags: string[] = [];
+  let title = "";
+
+  for (const line of yamlStr.split("\n")) {
+    const colonIdx = line.indexOf(":");
+    if (colonIdx === -1) continue;
+    const key = line.slice(0, colonIdx).trim();
+    const value = line.slice(colonIdx + 1).trim();
+
+    if (key === "tags") {
+      const tagsMatch = value.match(/^\[(.*)\]$/);
+      if (tagsMatch) {
+        tags = tagsMatch[1].split(",").map((t) => t.trim()).filter(Boolean);
+      }
+    }
+  }
+
+  const titleMatch = body.match(/^#\s+(.+)$/m);
+  if (titleMatch) {
+    title = titleMatch[1];
+  }
+
+  return { tags, title, body };
+}
+
+function calculateSimilarity(tagsA: string[], tagsB: string[]): number {
+  const setA = new Set(tagsA);
+  const setB = new Set(tagsB);
+  let overlap = 0;
+  for (const tag of setA) {
+    if (setB.has(tag)) overlap++;
+  }
+  return overlap;
+}
+
+function slugifyTitle(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+export async function backlinkVault(vaultPath: string): Promise<void> {
+  if (!fs.existsSync(vaultPath)) {
+    console.log(`Vault not found at ${vaultPath}`);
+    return;
+  }
+
+  const mdFiles = fs.readdirSync(vaultPath).filter((f) => f.endsWith(".md"));
+  console.log(`Processing ${mdFiles.length} files for backlinks...`);
+
+  const filesData: FileData[] = [];
+
+  for (const file of mdFiles) {
+    const filepath = path.join(vaultPath, file);
+    const content = fs.readFileSync(filepath, "utf-8");
+    const parsed = parseFrontMatter(content);
+    if (parsed) {
+      filesData.push({
+        filename: file,
+        filepath,
+        title: parsed.title || file.replace(".md", ""),
+        tags: parsed.tags,
+        content,
+      });
+    }
+  }
+
+  let updated = 0;
+
+  for (const fileData of filesData) {
+    const related: { file: FileData; score: number }[] = [];
+
+    for (const other of filesData) {
+      if (other.filename === fileData.filename) continue;
+
+      const score = calculateSimilarity(fileData.tags, other.tags);
+      if (score >= 2) {
+        related.push({ file: other, score });
+      }
+    }
+
+    related.sort((a, b) => b.score - a.score);
+    const topRelated = related.slice(0, 5);
+
+    if (topRelated.length === 0) continue;
+
+    const relatedSection = topRelated
+      .filter((r) => {
+        const reverseScore = calculateSimilarity(r.file.tags, fileData.tags);
+        const hasOtherLinks = related.length > 1 || related.some((x) => x.file.filename !== r.file.filename);
+        return hasOtherLinks || reverseScore < r.score;
+      })
+      .map((r) => `- [[${r.file.title}]]`)
+      .join("\n");
+
+    if (!relatedSection) continue;
+
+    const relatedMarker = "## Related";
+    const relatedIdx = fileData.content.lastIndexOf(relatedMarker);
+
+    let newContent: string;
+    if (relatedIdx !== -1) {
+      const beforeRelated = fileData.content.slice(0, relatedIdx + relatedMarker.length);
+      newContent = beforeRelated + "\n\n" + relatedSection + "\n";
+    } else {
+      newContent = fileData.content.trimEnd() + "\n\n## Related\n\n" + relatedSection + "\n";
+    }
+
+    if (newContent !== fileData.content) {
+      fs.writeFileSync(fileData.filepath, newContent, "utf-8");
+      updated++;
+    }
+  }
+
+  console.log(`Added backlinks to ${updated} files`);
+}

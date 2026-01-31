@@ -103,9 +103,9 @@ id: <original-conversation-id>
 - [x] Extract topic tags from conversation content (keyword-based, no LLM needed)
 
 ### 8. Backlinker
-- [ ] Find related conversations by overlapping tags/topics
-- [ ] Insert `[[wikilinks]]` in Related section
-- [ ] Avoid circular-only links (A↔B with nothing else)
+- [x] Find related conversations by overlapping tags/topics
+- [x] Insert `[[wikilinks]]` in Related section
+- [x] Avoid circular-only links (A↔B with nothing else)
 
 ### 9. CLI glue
 - [ ] `palimpsest ingest --source chatgpt --input ./export.zip --vault ./vault`

@@ -61,9 +61,9 @@ program
   .command("backlink")
   .description("Add backlinks between related conversations")
   .option("--vault <path>", "Vault directory", "./vault")
-  .action((options) => {
-    console.log(`Adding backlinks in ${options.vault}...`);
-    console.log("Not yet implemented");
+  .action(async (options) => {
+    const { backlinkVault } = await import("./backlinker.js");
+    await backlinkVault(options.vault);
   });
 
 program
