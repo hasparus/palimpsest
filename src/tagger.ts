@@ -25,6 +25,22 @@ function extractQuarter(date: Date): string {
   return `Q${quarter}`;
 }
 
+function extractModelFamily(model?: string): string | null {
+  if (!model) return null;
+  const lower = model.toLowerCase();
+  
+  if (lower.includes("gpt-4o")) return "gpt-4o";
+  if (lower.includes("gpt-4")) return "gpt-4";
+  if (lower.includes("gpt-3.5")) return "gpt-3.5";
+  if (lower.includes("o1") || lower.includes("o3")) return "o-series";
+  if (lower.includes("claude-3.5") || lower.includes("claude-3-5")) return "claude-3.5";
+  if (lower.includes("claude-3")) return "claude-3";
+  if (lower.includes("claude-2")) return "claude-2";
+  if (lower.includes("gemini")) return "gemini";
+  
+  return null;
+}
+
 function extractTopics(text: string): string[] {
   const lowerText = text.toLowerCase();
   const topics: string[] = [];
@@ -89,6 +105,28 @@ function serializeFrontMatter(fm: FrontMatter): string {
   return lines.join("\n");
 }
 
+export function generateTags(source: string, date: Date, model?: string, body?: string): string[] {
+  const tags = new Set<string>();
+  
+  tags.add(source);
+  tags.add(date.getFullYear().toString());
+  tags.add(extractQuarter(date));
+  
+  const modelFamily = extractModelFamily(model);
+  if (modelFamily) {
+    tags.add(modelFamily);
+  }
+  
+  if (body) {
+    const topics = extractTopics(body);
+    for (const topic of topics) {
+      tags.add(topic);
+    }
+  }
+  
+  return Array.from(tags).sort();
+}
+
 export async function tagVault(vaultPath: string): Promise<void> {
   if (!fs.existsSync(vaultPath)) {
     console.log(`Vault not found at ${vaultPath}`);
@@ -115,6 +153,11 @@ export async function tagVault(vaultPath: string): Promise<void> {
       const date = new Date(frontMatter.date);
       existingTags.add(date.getFullYear().toString());
       existingTags.add(extractQuarter(date));
+    }
+
+    const modelFamily = extractModelFamily(frontMatter.model);
+    if (modelFamily) {
+      existingTags.add(modelFamily);
     }
 
     const topics = extractTopics(body);

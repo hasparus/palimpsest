@@ -1,6 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import type { Conversation } from "./types.js";
+import { generateTags } from "./tagger.js";
 
 function slugify(text: string): string {
   return text
@@ -70,10 +71,14 @@ export async function writeConversation(
   }
   writtenIds.add(conversation.id);
 
-  const filename = generateFilename(conversation);
+  const body = conversation.messages.map((m) => m.content).join("\n\n");
+  const tags = generateTags(conversation.source, conversation.date, conversation.model, body);
+  const taggedConversation = { ...conversation, tags };
+
+  const filename = generateFilename(taggedConversation);
   const filepath = path.join(vaultPath, filename);
 
-  const markdown = conversationToMarkdown(conversation);
+  const markdown = conversationToMarkdown(taggedConversation);
   fs.writeFileSync(filepath, markdown, "utf-8");
 
   return filepath;

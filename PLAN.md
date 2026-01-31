@@ -167,10 +167,10 @@ title: <conversation title>
 - [x] Handle both `input_text` and `output_text` content types
 - [x] Walk `~/.codex/sessions/` and `~/.codex/archived_sessions/` recursively
 
-### 6. Tagger improvements
-- [ ] Run tagger after ingest automatically (no separate step needed)
-- [ ] Add model-family tags (gpt-4, claude-3, etc.)
-- [ ] Improve keyword extraction: also check message pairs for programming language detection
+### 6. Tagger improvements ✅
+- [x] Run tagger after ingest automatically (no separate step needed)
+- [x] Add model-family tags (gpt-4, claude-3, etc.)
+- [x] Improve keyword extraction: also check message pairs for programming language detection
 
 ### 7. Update sync command
 - [ ] `palimpsest sync` should: ingest all → tag → backlink
