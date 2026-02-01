@@ -8,3 +8,5 @@ dist/
 *.db-shm
 ralph.log
 test-fixtures/
+.context/
+package-lock.json
