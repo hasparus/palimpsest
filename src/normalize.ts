@@ -15,10 +15,21 @@ function formatDate(date: Date): string {
   return date.toISOString().split("T")[0];
 }
 
+function hashId(id: string): string {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    const char = id.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash).toString(16).slice(0, 8).padStart(8, '0');
+}
+
 function generateFilename(conversation: Conversation): string {
   const dateStr = formatDate(conversation.date);
+  const hash8 = hashId(conversation.id);
   const slug = slugify(conversation.title);
-  return `${dateStr}_${conversation.source}_${slug}.md`;
+  return `${dateStr}_${conversation.source}_${hash8}_${slug}.md`;
 }
 
 function escapeYamlString(str: string): string {

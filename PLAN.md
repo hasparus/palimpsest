@@ -134,9 +134,9 @@ Filter `<environment_context>` content.
 - [x] Verify all ingesters still work
 
 ### 9. Fix filename collisions
-- [ ] Include short id hash in filename: `{date}_{source}_{hash8}_{slug}.md`
-- [ ] This prevents collisions when same-day, same-source convos have similar titles
-- [ ] Slug truncation at 50 chars makes this likely with real data
+- [x] Include short id hash in filename: `{date}_{source}_{hash8}_{slug}.md`
+- [x] This prevents collisions when same-day, same-source convos have similar titles
+- [x] Slug truncation at 50 chars makes this likely with real data
 
 ### 10. Use gray-matter for frontmatter
 - [ ] Add `gray-matter` dependency
