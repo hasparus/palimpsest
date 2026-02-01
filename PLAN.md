@@ -127,11 +127,11 @@ Filter `<environment_context>` content.
 ## Next: Harden & Polish
 
 ### 8. Migrate to Bun
-- [ ] Replace `package.json` scripts to use `bun`
-- [ ] Remove tsx dependency (bun runs .ts natively)
-- [ ] Use `bun test` for test runner
-- [ ] Update shebang in cli.ts if needed
-- [ ] Verify all ingesters still work
+- [x] Replace `package.json` scripts to use `bun`
+- [x] Remove tsx dependency (bun runs .ts natively)
+- [x] Use `bun test` for test runner
+- [x] Update shebang in cli.ts if needed
+- [x] Verify all ingesters still work
 
 ### 9. Fix filename collisions
 - [ ] Include short id hash in filename: `{date}_{source}_{hash8}_{slug}.md`

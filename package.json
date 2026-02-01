@@ -8,16 +8,17 @@
     "palimpsest": "./src/cli.ts"
   },
   "scripts": {
-    "start": "tsx src/cli.ts",
-    "typecheck": "tsc --noEmit"
+    "start": "bun src/cli.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
   },
   "dependencies": {
     "commander": "^12.1.0",
     "jszip": "^3.10.1"
   },
   "devDependencies": {
+    "@types/bun": "^1.2.18",
     "@types/node": "^22.10.0",
-    "tsx": "^4.19.0",
     "typescript": "^5.7.0"
   }
 }
