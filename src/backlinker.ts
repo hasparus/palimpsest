@@ -1,5 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import matter from "gray-matter";
 
 interface FileData {
   filename: string;
@@ -7,38 +8,6 @@ interface FileData {
   title: string;
   tags: string[];
   content: string;
-}
-
-function parseFrontMatter(content: string): { tags: string[]; title: string; body: string } | null {
-  const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
-  if (!match) return null;
-
-  const yamlStr = match[1];
-  const body = match[2];
-
-  let tags: string[] = [];
-  let title = "";
-
-  for (const line of yamlStr.split("\n")) {
-    const colonIdx = line.indexOf(":");
-    if (colonIdx === -1) continue;
-    const key = line.slice(0, colonIdx).trim();
-    const value = line.slice(colonIdx + 1).trim();
-
-    if (key === "tags") {
-      const tagsMatch = value.match(/^\[(.*)\]$/);
-      if (tagsMatch) {
-        tags = tagsMatch[1].split(",").map((t) => t.trim()).filter(Boolean);
-      }
-    }
-  }
-
-  const titleMatch = body.match(/^#\s+(.+)$/m);
-  if (titleMatch) {
-    title = titleMatch[1];
-  }
-
-  return { tags, title, body };
 }
 
 function calculateSimilarity(tagsA: string[], tagsB: string[]): number {
@@ -72,16 +41,17 @@ export async function backlinkVault(vaultPath: string): Promise<void> {
   for (const file of mdFiles) {
     const filepath = path.join(vaultPath, file);
     const content = fs.readFileSync(filepath, "utf-8");
-    const parsed = parseFrontMatter(content);
-    if (parsed) {
-      filesData.push({
-        filename: file,
-        filepath,
-        title: parsed.title || file.replace(".md", ""),
-        tags: parsed.tags,
-        content,
-      });
-    }
+    const parsed = matter(content);
+    const tags = Array.isArray(parsed.data.tags) ? parsed.data.tags : [];
+    const titleMatch = parsed.content.match(/^#\s+(.+)$/m);
+    const title = titleMatch ? titleMatch[1] : file.replace(".md", "");
+    filesData.push({
+      filename: file,
+      filepath,
+      title,
+      tags,
+      content,
+    });
   }
 
   let updated = 0;

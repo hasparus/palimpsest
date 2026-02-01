@@ -139,11 +139,11 @@ Filter `<environment_context>` content.
 - [x] Slug truncation at 50 chars makes this likely with real data
 
 ### 10. Use gray-matter for frontmatter
-- [ ] Add `gray-matter` dependency
-- [ ] Replace hand-rolled YAML parsing in tagger.ts and backlinker.ts with `matter(content)` / `matter.stringify(content, data)`
-- [ ] Replace manual frontmatter generation in normalize.ts with `matter.stringify`
-- [ ] Delete dead `escapeYamlString` function from normalize.ts
-- [ ] Delete duplicated `parseFrontMatter` / `serializeFrontMatter` from tagger.ts and backlinker.ts
+- [x] Add `gray-matter` dependency
+- [x] Replace hand-rolled YAML parsing in tagger.ts and backlinker.ts with `matter(content)` / `matter.stringify(content, data)`
+- [x] Replace manual frontmatter generation in normalize.ts with `matter.stringify`
+- [x] Delete dead `escapeYamlString` function from normalize.ts
+- [x] Delete duplicated `parseFrontMatter` / `serializeFrontMatter` from tagger.ts and backlinker.ts
 
 ### 11. Fix deduplication bug
 - [ ] `resetDeduplication()` exists but is never called between ingesters in sync

@@ -1,5 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import matter from "gray-matter";
 
 const TOPIC_KEYWORDS: Record<string, string[]> = {
   typescript: ["typescript", "ts", "tsx", ".ts", "tsc"],
@@ -65,46 +66,6 @@ interface FrontMatter {
   id: string;
 }
 
-function parseFrontMatter(content: string): { frontMatter: FrontMatter; body: string } | null {
-  const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
-  if (!match) return null;
-
-  const yamlStr = match[1];
-  const body = match[2];
-
-  const frontMatter: Partial<FrontMatter> = {};
-  for (const line of yamlStr.split("\n")) {
-    const colonIdx = line.indexOf(":");
-    if (colonIdx === -1) continue;
-    const key = line.slice(0, colonIdx).trim();
-    let value = line.slice(colonIdx + 1).trim();
-
-    if (key === "tags") {
-      const tagsMatch = value.match(/^\[(.*)\]$/);
-      if (tagsMatch) {
-        frontMatter.tags = tagsMatch[1].split(",").map((t) => t.trim()).filter(Boolean);
-      }
-    } else {
-      frontMatter[key as keyof FrontMatter] = value as never;
-    }
-  }
-
-  return { frontMatter: frontMatter as FrontMatter, body };
-}
-
-function serializeFrontMatter(fm: FrontMatter): string {
-  const lines = ["---"];
-  lines.push(`source: ${fm.source}`);
-  lines.push(`date: ${fm.date}`);
-  if (fm.model) lines.push(`model: ${fm.model}`);
-  if (fm.tags && fm.tags.length > 0) {
-    lines.push(`tags: [${fm.tags.join(", ")}]`);
-  }
-  lines.push(`id: ${fm.id}`);
-  lines.push("---");
-  return lines.join("\n");
-}
-
 export function generateTags(source: string, date: Date, model?: string, body?: string): string[] {
   const tags = new Set<string>();
   
@@ -141,10 +102,10 @@ export async function tagVault(vaultPath: string): Promise<void> {
     const filepath = path.join(vaultPath, file);
     const content = fs.readFileSync(filepath, "utf-8");
 
-    const parsed = parseFrontMatter(content);
-    if (!parsed) continue;
+    const parsed = matter(content);
+    const frontMatter = parsed.data as FrontMatter;
+    if (!frontMatter.source) continue;
 
-    const { frontMatter, body } = parsed;
     const existingTags = new Set(frontMatter.tags || []);
 
     existingTags.add(frontMatter.source);
@@ -160,7 +121,7 @@ export async function tagVault(vaultPath: string): Promise<void> {
       existingTags.add(modelFamily);
     }
 
-    const topics = extractTopics(body);
+    const topics = extractTopics(parsed.content);
     for (const topic of topics) {
       existingTags.add(topic);
     }
@@ -168,7 +129,7 @@ export async function tagVault(vaultPath: string): Promise<void> {
     const newTags = Array.from(existingTags).sort();
     if (JSON.stringify(newTags) !== JSON.stringify(frontMatter.tags || [])) {
       frontMatter.tags = newTags;
-      const newContent = serializeFrontMatter(frontMatter) + "\n" + body;
+      const newContent = matter.stringify(parsed.content, frontMatter);
       fs.writeFileSync(filepath, newContent, "utf-8");
       updated++;
     }

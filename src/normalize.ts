@@ -1,5 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import matter from "gray-matter";
 import type { Conversation } from "./types.js";
 import { generateTags } from "./tagger.js";
 
@@ -32,43 +33,35 @@ function generateFilename(conversation: Conversation): string {
   return `${dateStr}_${conversation.source}_${hash8}_${slug}.md`;
 }
 
-function escapeYamlString(str: string): string {
-  if (/[:\[\]{}#&*!|>'"%@`]/.test(str) || str.includes("\n")) {
-    return `"${str.replace(/"/g, '\\"').replace(/\n/g, "\\n")}"`;
-  }
-  return str;
-}
-
 export function conversationToMarkdown(conversation: Conversation): string {
-  const lines: string[] = [];
-
-  lines.push("---");
-  lines.push(`source: ${conversation.source}`);
-  lines.push(`date: ${formatDate(conversation.date)}`);
+  const frontMatter: Record<string, unknown> = {
+    source: conversation.source,
+    date: formatDate(conversation.date),
+  };
   if (conversation.model) {
-    lines.push(`model: ${conversation.model}`);
+    frontMatter.model = conversation.model;
   }
   if (conversation.tags && conversation.tags.length > 0) {
-    lines.push(`tags: [${conversation.tags.join(", ")}]`);
+    frontMatter.tags = conversation.tags;
   }
-  lines.push(`id: ${conversation.id}`);
-  lines.push("---");
-  lines.push("");
-  lines.push(`# ${conversation.title}`);
-  lines.push("");
+  frontMatter.id = conversation.id;
+
+  const bodyLines: string[] = [];
+  bodyLines.push(`# ${conversation.title}`);
+  bodyLines.push("");
 
   for (const message of conversation.messages) {
     const roleLabel = message.role === "user" ? "User" : "Assistant";
-    lines.push(`## ${roleLabel}`);
-    lines.push("");
-    lines.push(message.content);
-    lines.push("");
+    bodyLines.push(`## ${roleLabel}`);
+    bodyLines.push("");
+    bodyLines.push(message.content);
+    bodyLines.push("");
   }
 
-  lines.push("## Related");
-  lines.push("");
+  bodyLines.push("## Related");
+  bodyLines.push("");
 
-  return lines.join("\n");
+  return matter.stringify(bodyLines.join("\n"), frontMatter);
 }
 
 const writtenIds = new Set<string>();
