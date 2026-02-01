@@ -2,3 +2,4 @@
 Max iterations: 10
 
 --- Iteration 1/10 (01:44:45) ---
+Error: stream ended without producing a Message with role=assistant

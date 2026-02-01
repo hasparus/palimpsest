@@ -106,3 +106,8 @@ export async function writeConversation(
 
   return filepath;
 }
+
+export function resetDeduplicationCache(): void {
+  cachedVaultPath = null;
+  existingIds = new Set();
+}
