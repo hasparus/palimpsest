@@ -80,32 +80,69 @@ program
     
     console.log(`Syncing to ${vault}...`);
     let total = 0;
+    const errors: string[] = [];
 
     if (options.chatgpt) {
       console.log("\n--- ChatGPT ---");
-      const { ingestChatGPT } = await import("./ingest/chatgpt.js");
-      total += await ingestChatGPT(options.chatgpt, vault);
+      try {
+        const { ingestChatGPT } = await import("./ingest/chatgpt.js");
+        total += await ingestChatGPT(options.chatgpt, vault);
+      } catch (err) {
+        const msg = `ChatGPT: ${err instanceof Error ? err.message : String(err)}`;
+        console.error(msg);
+        errors.push(msg);
+      }
     }
 
     if (options["claude-web"]) {
       console.log("\n--- Claude Web ---");
-      const { ingestClaudeWeb } = await import("./ingest/claude-web.js");
-      total += await ingestClaudeWeb(options["claude-web"], vault);
+      try {
+        const { ingestClaudeWeb } = await import("./ingest/claude-web.js");
+        total += await ingestClaudeWeb(options["claude-web"], vault);
+      } catch (err) {
+        const msg = `Claude Web: ${err instanceof Error ? err.message : String(err)}`;
+        console.error(msg);
+        errors.push(msg);
+      }
     }
 
     console.log("\n--- Claude Code ---");
-    const { ingestClaudeCode } = await import("./ingest/claude-code.js");
-    total += await ingestClaudeCode(vault);
+    try {
+      const { ingestClaudeCode } = await import("./ingest/claude-code.js");
+      total += await ingestClaudeCode(vault);
+    } catch (err) {
+      const msg = `Claude Code: ${err instanceof Error ? err.message : String(err)}`;
+      console.error(msg);
+      errors.push(msg);
+    }
 
     console.log("\n--- Codex ---");
-    const { ingestCodex } = await import("./ingest/codex.js");
-    total += await ingestCodex(vault);
+    try {
+      const { ingestCodex } = await import("./ingest/codex.js");
+      total += await ingestCodex(vault);
+    } catch (err) {
+      const msg = `Codex: ${err instanceof Error ? err.message : String(err)}`;
+      console.error(msg);
+      errors.push(msg);
+    }
 
     console.log("\n--- Backlinking ---");
-    const { backlinkVault } = await import("./backlinker.js");
-    await backlinkVault(vault);
+    try {
+      const { backlinkVault } = await import("./backlinker.js");
+      await backlinkVault(vault);
+    } catch (err) {
+      const msg = `Backlinking: ${err instanceof Error ? err.message : String(err)}`;
+      console.error(msg);
+      errors.push(msg);
+    }
 
     console.log(`\nSync complete! ${total} conversations written.`);
+    if (errors.length > 0) {
+      console.log(`${errors.length} ingester(s) failed:`);
+      for (const err of errors) {
+        console.log(`  - ${err}`);
+      }
+    }
     console.log(`\nTo enable search, run:\n  qmd collection add ${vault} --name conversations && qmd embed`);
   });
 

@@ -151,9 +151,9 @@ Filter `<environment_context>` content.
 - [x] Check if `{vault}/{filename}` already exists with same id in frontmatter
 
 ### 12. Add error handling to CLI
-- [ ] Wrap all async ingest calls in try/catch
-- [ ] Log errors per-conversation but continue (don't abort whole ingest)
-- [ ] Report: "X succeeded, Y failed" at end
+- [x] Wrap all async ingest calls in try/catch
+- [x] Log errors per-conversation but continue (don't abort whole ingest)
+- [x] Report: "X succeeded, Y failed" at end
 
 ### 13. Unit tests with fixtures
 - [ ] `tests/ingest/chatgpt.test.ts` — small fixture with branching mapping, system msgs
