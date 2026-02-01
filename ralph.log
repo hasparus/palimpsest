@@ -8,3 +8,4 @@ Error: stream ended without producing a Message with role=assistant
 No unchecked items remain. All stories are complete.
 
 RALPH_STATUS:done
+=== Ralph complete after 2 iterations ===

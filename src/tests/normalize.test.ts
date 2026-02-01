@@ -19,7 +19,7 @@ describe("normalize", () => {
 
   const baseConversation: Conversation = {
     id: "test-123",
-    source: "test",
+    source: "chatgpt",
     title: "Test Conversation",
     date: new Date("2025-03-15T10:00:00Z"),
     messages: [
@@ -31,7 +31,7 @@ describe("normalize", () => {
   test("generates valid frontmatter", () => {
     const md = conversationToMarkdown(baseConversation);
     expect(md).toContain("---");
-    expect(md).toContain("source: test");
+    expect(md).toContain("source: chatgpt");
     expect(md).toContain("date: '2025-03-15'");
     expect(md).toContain("id: test-123");
   });
@@ -83,6 +83,6 @@ describe("normalize", () => {
   test("filename includes hash to prevent collisions", async () => {
     await writeConversation(baseConversation, TEST_VAULT);
     const files = fs.readdirSync(TEST_VAULT);
-    expect(files[0]).toMatch(/^\d{4}-\d{2}-\d{2}_test_[a-f0-9]{8}_/);
+    expect(files[0]).toMatch(/^\d{4}-\d{2}-\d{2}_chatgpt_[a-f0-9]{8}_/);
   });
 });
