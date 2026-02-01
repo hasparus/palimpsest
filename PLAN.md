@@ -20,26 +20,30 @@ palimpsest/
 │   │   ├── claude-web.ts      # Claude.ai export (content blocks: text/thinking/tool_use)
 │   │   ├── claude-code.ts     # ~/.claude/ local JSONL
 │   │   └── codex.ts           # ~/.codex/ sessions + archived_sessions
-│   ├── types.ts               # Conversation, Message, ContentBlock types
+│   ├── types.ts               # Conversation, Message types
 │   ├── normalize.ts           # Conversation → Markdown with YAML frontmatter
+│   ├── frontmatter.ts         # shared YAML frontmatter parse/serialize (TODO: extract)
 │   ├── tagger.ts              # auto-tag: source, date, quarter, keyword topics
 │   ├── backlinker.ts          # [[wikilinks]] by shared tags (≥2 overlap, top 5)
 │   └── cli.ts                 # CLI entry point
+├── tests/                     # bun test — fixture-based
+│   └── fixtures/              # small representative exports per source
 ├── vault/                     # output .md files (gitignored)
+├── setup-qmd.sh               # wire up qmd collection after sync
 ├── package.json
 └── tsconfig.json
 ```
 
 ## Search: use qmd
 
-After syncing, point qmd at the vault:
+After syncing, run `./setup-qmd.sh ./vault` or manually:
 ```sh
 qmd collection add ./vault --name conversations
 qmd context add qmd://conversations "AI conversation history from ChatGPT, Claude, Codex"
 qmd embed
 qmd query "how did I solve that auth bug?"
 ```
-Or add qmd as MCP server in Claude/Amp settings for automatic search.
+Add qmd as MCP server in Claude/Amp settings for automatic search in future conversations.
 
 ## Data Source Formats (from nexus-ai-chat-importer analysis)
 
@@ -110,74 +114,59 @@ JSONL in `~/.codex/sessions/` and `~/.codex/archived_sessions/`.
 `session_meta` entry has id, timestamp, cwd. `response_item` entries have messages.
 Filter `<environment_context>` content.
 
-## Markdown Output Format
-
-```markdown
----
-source: chatgpt | claude-web | claude-code | codex
-date: 2025-03-15
-model: gpt-4o | claude-3.5-sonnet | ...
-tags: [coding, debugging, typescript]
-id: <original-conversation-id>
-title: <conversation title>
----
-
-# <title>
-
-## User
-<message>
-
-## Assistant
-<message>
-
-## Related
-- [[other-conversation-title]]
-```
-
-## Stories (ordered by priority)
+## Completed Stories
 
 ### 1. Project scaffold ✅
-- [x] `package.json` with typescript, tsx, commander
-- [x] `tsconfig.json`
-- [x] Basic CLI entry point with commander
-
 ### 2. Fix ChatGPT ingester ✅
-- [x] Traverse mapping as DAG using parent/children pointers (not Object.entries iteration)
-- [x] Follow `current_node` to find active branch when there are forks
-- [x] Filter: skip system role, tool role, empty parts, `content_type !== 'text'` non-user messages
-- [x] Extract text parts only (skip image/object parts)
-- [x] Use real `Chat` types from nexus analysis (see format docs above)
-- [x] Test with: `npx tsx src/cli.ts ingest --source chatgpt --input test-fixtures/chatgpt-export.json --vault ./vault` (create a small fixture file for smoke test)
-
 ### 3. Fix Claude Web ingester ✅
-- [x] Handle `{ conversations: [...] }` wrapper (not bare array)
-- [x] Also handle bare array for compatibility
-- [x] Parse content blocks: extract `.text` from text blocks, `.thinking` from thinking blocks
-- [x] Skip tool_use and tool_result blocks (artifact noise)
-- [x] Include thinking in output as blockquote (`> *thinking:* ...`)
-- [x] Test with fixture
-
 ### 4. Fix Claude Code ingester ✅
-- [x] Handle content as `{type, text}[]` blocks — extract text blocks, format thinking blocks
-- [x] More robust JSONL parsing (skip malformed lines gracefully)
-- [x] Use cwd from first entry as title context if no better title
-
 ### 5. Fix Codex ingester ✅
-- [x] Filter `<environment_context>` XML content from messages
-- [x] Handle both `input_text` and `output_text` content types
-- [x] Walk `~/.codex/sessions/` and `~/.codex/archived_sessions/` recursively
-
 ### 6. Tagger improvements ✅
-- [x] Run tagger after ingest automatically (no separate step needed)
-- [x] Add model-family tags (gpt-4, claude-3, etc.)
-- [x] Improve keyword extraction: also check message pairs for programming language detection
-
 ### 7. Update sync command ✅
-- [x] `palimpsest sync` should: ingest all → tag → backlink
-- [x] After sync, print stats: X conversations, Y new, Z updated
-- [x] Auto-create vault dir if missing
-- [x] Print hint: "Run `qmd collection add ./vault --name conversations && qmd embed` to enable search"
 
-## Progress
+## Next: Harden & Polish
 
-_Updated by ralph loop — check git log for details._
+### 8. Migrate to Bun
+- [ ] Replace `package.json` scripts to use `bun`
+- [ ] Remove tsx dependency (bun runs .ts natively)
+- [ ] Use `bun test` for test runner
+- [ ] Update shebang in cli.ts if needed
+- [ ] Verify all ingesters still work
+
+### 9. Fix filename collisions
+- [ ] Include short id hash in filename: `{date}_{source}_{hash8}_{slug}.md`
+- [ ] This prevents collisions when same-day, same-source convos have similar titles
+- [ ] Slug truncation at 50 chars makes this likely with real data
+
+### 10. Extract shared frontmatter parser
+- [ ] `src/frontmatter.ts`: single `parseFrontMatter` / `serializeFrontMatter`
+- [ ] Remove duplicated parsing from tagger.ts and backlinker.ts
+- [ ] Use `escapeYamlString` (currently defined but never called in normalize.ts)
+
+### 11. Fix deduplication bug
+- [ ] `resetDeduplication()` exists but is never called between ingesters in sync
+- [ ] Move dedup to file-existence check instead of in-memory Set
+- [ ] Check if `{vault}/{filename}` already exists with same id in frontmatter
+
+### 12. Add error handling to CLI
+- [ ] Wrap all async ingest calls in try/catch
+- [ ] Log errors per-conversation but continue (don't abort whole ingest)
+- [ ] Report: "X succeeded, Y failed" at end
+
+### 13. Unit tests with fixtures
+- [ ] `tests/ingest/chatgpt.test.ts` — small fixture with branching mapping, system msgs
+- [ ] `tests/ingest/claude-web.test.ts` — wrapper + bare array, content blocks, thinking
+- [ ] `tests/ingest/claude-code.test.ts` — JSONL with mixed content types
+- [ ] `tests/ingest/codex.test.ts` — session_meta + response_items, env context filtering
+- [ ] `tests/normalize.test.ts` — frontmatter escaping, slug collisions, dedup
+- [ ] `tests/tagger.test.ts` — keyword extraction, model-family tags, invalid dates
+- [ ] Fixtures: small hand-crafted JSON/JSONL representing edge cases from real formats
+
+### 14. qmd setup script
+- [x] `setup-qmd.sh` — one-liner to create collection + context + embed
+
+## Not Doing
+
+- **EffectTS**: Overkill. This is a file-in → file-out CLI. Simple try/catch is fine.
+- **Custom search/MCP**: qmd already does this better than we could.
+- **Vector embeddings**: Deferred to qmd.
