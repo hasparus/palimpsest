@@ -96,10 +96,10 @@ export async function ingestClaudeCode(vaultPath: string, inputPath?: string): P
   if (inputPath) {
     const conversation = parseConversationFile(inputPath);
     if (conversation) {
-      await writeConversation(conversation, vaultPath);
-      count++;
+      const result = await writeConversation(conversation, vaultPath);
+      if (result) count++;
     }
-    console.log(`Wrote ${count} Claude Code conversations to ${vaultPath}`);
+    console.log(`Found ${conversation ? 1 : 0}, wrote ${count} Claude Code conversations to ${vaultPath}`);
     return count;
   }
 
@@ -111,6 +111,7 @@ export async function ingestClaudeCode(vaultPath: string, inputPath?: string): P
     return 0;
   }
 
+  let found = 0;
   const projectDirs = fs.readdirSync(projectsDir);
 
   for (const projectDir of projectDirs) {
@@ -124,8 +125,9 @@ export async function ingestClaudeCode(vaultPath: string, inputPath?: string): P
       try {
         const conversation = parseConversationFile(filepath);
         if (conversation) {
-          await writeConversation(conversation, vaultPath);
-          count++;
+          found++;
+          const result = await writeConversation(conversation, vaultPath);
+          if (result) count++;
         }
       } catch (err) {
         console.error(`Failed to parse ${filepath}:`, err);
@@ -133,6 +135,6 @@ export async function ingestClaudeCode(vaultPath: string, inputPath?: string): P
     }
   }
 
-  console.log(`Wrote ${count} Claude Code conversations to ${vaultPath}`);
+  console.log(`Found ${found}, wrote ${count} Claude Code conversations to ${vaultPath}`);
   return count;
 }

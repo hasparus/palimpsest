@@ -104,19 +104,21 @@ export async function ingestClaudeWeb(
 
   fs.mkdirSync(vaultPath, { recursive: true });
 
-  let count = 0;
+  let found = 0;
+  let written = 0;
   for (const raw of rawConversations) {
     try {
       const conversation = parseClaudeWebConversation(raw);
       if (conversation.messages.length > 0) {
-        await writeConversation(conversation, vaultPath);
-        count++;
+        found++;
+        const result = await writeConversation(conversation, vaultPath);
+        if (result) written++;
       }
     } catch (err) {
       console.error(`Failed to parse conversation ${raw.uuid}:`, err);
     }
   }
 
-  console.log(`Wrote ${count} conversations to ${vaultPath}`);
-  return count;
+  console.log(`Found ${found}, wrote ${written} conversations to ${vaultPath}`);
+  return written;
 }

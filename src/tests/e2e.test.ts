@@ -320,7 +320,7 @@ describe("e2e: deduplication", () => {
     resetDeduplicationCache();
 
     const count2 = await ingestChatGPT(path.join(FIXTURES, "chatgpt-export.json"), TEST_VAULT);
-    expect(count2).toBe(2); // ingestChatGPT counts parse attempts, not new writes
+    expect(count2).toBe(0); // dedup: all already exist on disk
 
     const files = readVaultFiles();
     expect(files.length).toBe(2); // still only 2 files on disk

@@ -74,11 +74,6 @@ export async function backlinkVault(vaultPath: string): Promise<void> {
     if (topRelated.length === 0) continue;
 
     const relatedSection = topRelated
-      .filter((r) => {
-        const reverseScore = calculateSimilarity(r.file.tags, fileData.tags);
-        const hasOtherLinks = related.length > 1 || related.some((x) => x.file.filename !== r.file.filename);
-        return hasOtherLinks || reverseScore < r.score;
-      })
       .map((r) => `- [[${r.file.title}]]`)
       .join("\n");
 

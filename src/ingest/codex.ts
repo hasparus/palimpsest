@@ -119,11 +119,12 @@ export async function ingestCodex(vaultPath: string, inputPath?: string): Promis
   if (inputPath) {
     const conversation = parseCodexSession(inputPath);
     if (conversation && conversation.messages.length > 0) {
-      await writeConversation(conversation, vaultPath);
-      console.log(`Wrote 1 Codex conversations to ${vaultPath}`);
-      return 1;
+      const result = await writeConversation(conversation, vaultPath);
+      const written = result ? 1 : 0;
+      console.log(`Found 1, wrote ${written} Codex conversations to ${vaultPath}`);
+      return written;
     } else {
-      console.log(`Wrote 0 Codex conversations to ${vaultPath}`);
+      console.log(`Found 0, wrote 0 Codex conversations to ${vaultPath}`);
       return 0;
     }
   }
@@ -145,19 +146,21 @@ export async function ingestCodex(vaultPath: string, inputPath?: string): Promis
 
   console.log(`Found ${allFiles.length} Codex session files`);
 
-  let count = 0;
+  let found = 0;
+  let written = 0;
   for (const filepath of allFiles) {
     try {
       const conversation = parseCodexSession(filepath);
       if (conversation && conversation.messages.length > 0) {
-        await writeConversation(conversation, vaultPath);
-        count++;
+        found++;
+        const result = await writeConversation(conversation, vaultPath);
+        if (result) written++;
       }
     } catch (err) {
       console.error(`Failed to parse ${filepath}:`, err);
     }
   }
 
-  console.log(`Wrote ${count} Codex conversations to ${vaultPath}`);
-  return count;
+  console.log(`Found ${found}, wrote ${written} Codex conversations to ${vaultPath}`);
+  return written;
 }

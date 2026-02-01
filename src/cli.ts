@@ -72,6 +72,8 @@ program
   .option("--vault <path>", "Vault directory", "./vault")
   .option("--chatgpt <path>", "ChatGPT export ZIP or JSON file")
   .option("--claude-web <path>", "Claude.ai export JSON file")
+  .option("--claude-code <path>", "Claude Code JSONL file or directory")
+  .option("--codex <path>", "Codex JSONL file or directory")
   .action(async (options) => {
     const { vault } = options;
     const fs = await import("node:fs");
@@ -94,11 +96,11 @@ program
       }
     }
 
-    if (options["claude-web"]) {
+    if (options.claudeWeb) {
       console.log("\n--- Claude Web ---");
       try {
         const { ingestClaudeWeb } = await import("./ingest/claude-web.js");
-        total += await ingestClaudeWeb(options["claude-web"], vault);
+        total += await ingestClaudeWeb(options.claudeWeb, vault);
       } catch (err) {
         const msg = `Claude Web: ${err instanceof Error ? err.message : String(err)}`;
         console.error(msg);
@@ -109,7 +111,7 @@ program
     console.log("\n--- Claude Code ---");
     try {
       const { ingestClaudeCode } = await import("./ingest/claude-code.js");
-      total += await ingestClaudeCode(vault);
+      total += await ingestClaudeCode(vault, options.claudeCode);
     } catch (err) {
       const msg = `Claude Code: ${err instanceof Error ? err.message : String(err)}`;
       console.error(msg);
@@ -119,9 +121,19 @@ program
     console.log("\n--- Codex ---");
     try {
       const { ingestCodex } = await import("./ingest/codex.js");
-      total += await ingestCodex(vault);
+      total += await ingestCodex(vault, options.codex);
     } catch (err) {
       const msg = `Codex: ${err instanceof Error ? err.message : String(err)}`;
+      console.error(msg);
+      errors.push(msg);
+    }
+
+    console.log("\n--- Tagging ---");
+    try {
+      const { tagVault } = await import("./tagger.js");
+      await tagVault(vault);
+    } catch (err) {
+      const msg = `Tagging: ${err instanceof Error ? err.message : String(err)}`;
       console.error(msg);
       errors.push(msg);
     }
