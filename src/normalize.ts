@@ -64,16 +64,35 @@ export function conversationToMarkdown(conversation: Conversation): string {
   return matter.stringify(bodyLines.join("\n"), frontMatter);
 }
 
-const writtenIds = new Set<string>();
+let cachedVaultPath: string | null = null;
+let existingIds: Set<string> = new Set();
+
+function loadExistingIds(vaultPath: string): Set<string> {
+  if (cachedVaultPath === vaultPath) return existingIds;
+  existingIds = new Set();
+  cachedVaultPath = vaultPath;
+  if (!fs.existsSync(vaultPath)) return existingIds;
+  const files = fs.readdirSync(vaultPath).filter((f) => f.endsWith(".md"));
+  for (const file of files) {
+    const filepath = path.join(vaultPath, file);
+    const content = fs.readFileSync(filepath, "utf-8");
+    const parsed = matter(content);
+    if (parsed.data.id) {
+      existingIds.add(parsed.data.id);
+    }
+  }
+  return existingIds;
+}
 
 export async function writeConversation(
   conversation: Conversation,
   vaultPath: string
 ): Promise<string | null> {
-  if (writtenIds.has(conversation.id)) {
+  const ids = loadExistingIds(vaultPath);
+  if (ids.has(conversation.id)) {
     return null;
   }
-  writtenIds.add(conversation.id);
+  ids.add(conversation.id);
 
   const body = conversation.messages.map((m) => m.content).join("\n\n");
   const tags = generateTags(conversation.source, conversation.date, conversation.model, body);
@@ -86,8 +105,4 @@ export async function writeConversation(
   fs.writeFileSync(filepath, markdown, "utf-8");
 
   return filepath;
-}
-
-export function resetDeduplication(): void {
-  writtenIds.clear();
 }

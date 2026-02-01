@@ -146,9 +146,9 @@ Filter `<environment_context>` content.
 - [x] Delete duplicated `parseFrontMatter` / `serializeFrontMatter` from tagger.ts and backlinker.ts
 
 ### 11. Fix deduplication bug
-- [ ] `resetDeduplication()` exists but is never called between ingesters in sync
-- [ ] Move dedup to file-existence check instead of in-memory Set
-- [ ] Check if `{vault}/{filename}` already exists with same id in frontmatter
+- [x] `resetDeduplication()` exists but is never called between ingesters in sync
+- [x] Move dedup to file-existence check instead of in-memory Set
+- [x] Check if `{vault}/{filename}` already exists with same id in frontmatter
 
 ### 12. Add error handling to CLI
 - [ ] Wrap all async ingest calls in try/catch
