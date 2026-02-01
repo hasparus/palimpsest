@@ -2,12 +2,14 @@ import { describe, test, expect, beforeEach, afterEach } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { ingestCodex } from "../ingest/codex.js";
+import { resetDeduplicationCache } from "../normalize.js";
 
 const FIXTURE_PATH = path.join(import.meta.dir, "../../test-fixtures/codex-session.jsonl");
 const TEST_VAULT = path.join(import.meta.dir, "../../.test-vault-codex");
 
 describe("Codex ingester", () => {
   beforeEach(() => {
+    resetDeduplicationCache();
     fs.rmSync(TEST_VAULT, { recursive: true, force: true });
     fs.mkdirSync(TEST_VAULT, { recursive: true });
   });

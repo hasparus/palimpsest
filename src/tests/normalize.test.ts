@@ -1,13 +1,14 @@
 import { describe, test, expect, beforeEach, afterEach } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { conversationToMarkdown, writeConversation } from "../normalize.js";
+import { conversationToMarkdown, writeConversation, resetDeduplicationCache } from "../normalize.js";
 import type { Conversation } from "../types.js";
 
 const TEST_VAULT = path.join(import.meta.dir, "../../.test-vault-normalize");
 
 describe("normalize", () => {
   beforeEach(() => {
+    resetDeduplicationCache();
     fs.rmSync(TEST_VAULT, { recursive: true, force: true });
     fs.mkdirSync(TEST_VAULT, { recursive: true });
   });

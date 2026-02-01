@@ -2,12 +2,14 @@ import { describe, test, expect, beforeEach, afterEach } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { ingestClaudeCode } from "../ingest/claude-code.js";
+import { resetDeduplicationCache } from "../normalize.js";
 
 const FIXTURE_PATH = path.join(import.meta.dir, "../../test-fixtures/claude-code-session.jsonl");
 const TEST_VAULT = path.join(import.meta.dir, "../../.test-vault-claude-code");
 
 describe("Claude Code ingester", () => {
   beforeEach(() => {
+    resetDeduplicationCache();
     fs.rmSync(TEST_VAULT, { recursive: true, force: true });
     fs.mkdirSync(TEST_VAULT, { recursive: true });
   });

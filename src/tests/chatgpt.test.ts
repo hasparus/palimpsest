@@ -2,12 +2,14 @@ import { describe, test, expect, beforeEach, afterEach } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { ingestChatGPT } from "../ingest/chatgpt.js";
+import { resetDeduplicationCache } from "../normalize.js";
 
 const FIXTURE_PATH = path.join(import.meta.dir, "../../test-fixtures/chatgpt-export.json");
 const TEST_VAULT = path.join(import.meta.dir, "../../.test-vault-chatgpt");
 
 describe("ChatGPT ingester", () => {
   beforeEach(() => {
+    resetDeduplicationCache();
     fs.rmSync(TEST_VAULT, { recursive: true, force: true });
     fs.mkdirSync(TEST_VAULT, { recursive: true });
   });
@@ -26,7 +28,7 @@ describe("ChatGPT ingester", () => {
   test("follows correct branch from tree (not forks)", async () => {
     await ingestChatGPT(FIXTURE_PATH, TEST_VAULT);
     const files = fs.readdirSync(TEST_VAULT);
-    const forkedFile = files.find((f) => f.includes("test-conversation-with-forks"));
+    const forkedFile = files.find((f) => f.includes("with-forks"));
     expect(forkedFile).toBeDefined();
     const content = fs.readFileSync(path.join(TEST_VAULT, forkedFile!), "utf-8");
     expect(content).toContain("I'm doing great!");
@@ -36,7 +38,7 @@ describe("ChatGPT ingester", () => {
   test("filters system and tool messages", async () => {
     await ingestChatGPT(FIXTURE_PATH, TEST_VAULT);
     const files = fs.readdirSync(TEST_VAULT);
-    const systemFile = files.find((f) => f.includes("conversation-with-system"));
+    const systemFile = files.find((f) => f.includes("with-system"));
     expect(systemFile).toBeDefined();
     const content = fs.readFileSync(path.join(TEST_VAULT, systemFile!), "utf-8");
     expect(content).not.toContain("You are a helpful assistant");
@@ -48,7 +50,8 @@ describe("ChatGPT ingester", () => {
   test("extracts model from conversation", async () => {
     await ingestChatGPT(FIXTURE_PATH, TEST_VAULT);
     const files = fs.readdirSync(TEST_VAULT);
-    const forkedFile = files.find((f) => f.includes("test-conversation-with-forks"));
+    const forkedFile = files.find((f) => f.includes("with-forks"));
+    expect(forkedFile).toBeDefined();
     const content = fs.readFileSync(path.join(TEST_VAULT, forkedFile!), "utf-8");
     expect(content).toContain("model: gpt-4o");
   });

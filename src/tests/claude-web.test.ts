@@ -2,6 +2,7 @@ import { describe, test, expect, beforeEach, afterEach } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { ingestClaudeWeb } from "../ingest/claude-web.js";
+import { resetDeduplicationCache } from "../normalize.js";
 
 const WRAPPED_FIXTURE = path.join(import.meta.dir, "../../test-fixtures/claude-web-export.json");
 const BARE_ARRAY_FIXTURE = path.join(import.meta.dir, "../../test-fixtures/claude-web-bare-array.json");
@@ -9,6 +10,7 @@ const TEST_VAULT = path.join(import.meta.dir, "../../.test-vault-claude-web");
 
 describe("Claude Web ingester", () => {
   beforeEach(() => {
+    resetDeduplicationCache();
     fs.rmSync(TEST_VAULT, { recursive: true, force: true });
     fs.mkdirSync(TEST_VAULT, { recursive: true });
   });

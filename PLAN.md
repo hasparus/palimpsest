@@ -156,13 +156,13 @@ Filter `<environment_context>` content.
 - [x] Report: "X succeeded, Y failed" at end
 
 ### 13. Unit tests with fixtures
-- [ ] `tests/ingest/chatgpt.test.ts` — small fixture with branching mapping, system msgs
-- [ ] `tests/ingest/claude-web.test.ts` — wrapper + bare array, content blocks, thinking
-- [ ] `tests/ingest/claude-code.test.ts` — JSONL with mixed content types
-- [ ] `tests/ingest/codex.test.ts` — session_meta + response_items, env context filtering
-- [ ] `tests/normalize.test.ts` — frontmatter escaping, slug collisions, dedup
-- [ ] `tests/tagger.test.ts` — keyword extraction, model-family tags, invalid dates
-- [ ] Fixtures: small hand-crafted JSON/JSONL representing edge cases from real formats
+- [x] `tests/ingest/chatgpt.test.ts` — small fixture with branching mapping, system msgs
+- [x] `tests/ingest/claude-web.test.ts` — wrapper + bare array, content blocks, thinking
+- [x] `tests/ingest/claude-code.test.ts` — JSONL with mixed content types
+- [x] `tests/ingest/codex.test.ts` — session_meta + response_items, env context filtering
+- [x] `tests/normalize.test.ts` — frontmatter escaping, slug collisions, dedup
+- [x] `tests/tagger.test.ts` — keyword extraction, model-family tags, invalid dates
+- [x] Fixtures: small hand-crafted JSON/JSONL representing edge cases from real formats
 
 ### 14. qmd setup script
 - [x] `setup-qmd.sh` — one-liner to create collection + context + embed
