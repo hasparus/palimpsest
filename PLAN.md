@@ -138,10 +138,12 @@ Filter `<environment_context>` content.
 - [ ] This prevents collisions when same-day, same-source convos have similar titles
 - [ ] Slug truncation at 50 chars makes this likely with real data
 
-### 10. Extract shared frontmatter parser
-- [ ] `src/frontmatter.ts`: single `parseFrontMatter` / `serializeFrontMatter`
-- [ ] Remove duplicated parsing from tagger.ts and backlinker.ts
-- [ ] Use `escapeYamlString` (currently defined but never called in normalize.ts)
+### 10. Use gray-matter for frontmatter
+- [ ] Add `gray-matter` dependency
+- [ ] Replace hand-rolled YAML parsing in tagger.ts and backlinker.ts with `matter(content)` / `matter.stringify(content, data)`
+- [ ] Replace manual frontmatter generation in normalize.ts with `matter.stringify`
+- [ ] Delete dead `escapeYamlString` function from normalize.ts
+- [ ] Delete duplicated `parseFrontMatter` / `serializeFrontMatter` from tagger.ts and backlinker.ts
 
 ### 11. Fix deduplication bug
 - [ ] `resetDeduplication()` exists but is never called between ingesters in sync
