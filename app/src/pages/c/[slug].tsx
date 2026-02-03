@@ -1,12 +1,10 @@
 
-import { Link } from 'waku/router';
+import { Link } from 'waku/router/client';
 import { readFile } from 'node:fs/promises';
 import matter from 'gray-matter';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import type { PageProps } from 'waku/router';
-
-export default async function ConversationPage({ slug }: PageProps<'/c/[slug]'>) {
+export default async function ConversationPage({ slug }: { slug: string }) {
   const fileContent = await readFile(`./private/vault/${slug}.md`, 'utf8');
   const { data, content } = matter(fileContent);
 

@@ -81,7 +81,7 @@ Focus on actionable, referenceable knowledge. Skip anything too project-specific
 EOF
 
 read -r -d '' EXEC_PROMPT <<'EOF' || true
-Create a concise executive summary (1-2 pages) of this developer's AI-assisted work over the past months.
+Create a concise executive summary (1-2 pages) of this developer's AI conversation over the past months.
 
 Include:
 - What they built
@@ -89,7 +89,7 @@ Include:
 - Their main technical focus areas
 - Top 5 insights worth remembering
 
-Write it in first person, as if the developer is writing a retrospective for themselves.
+Write it in a style of Richard Feynman and Paul Graham.
 Keep it crisp and useful as a quick reference.
 EOF
 

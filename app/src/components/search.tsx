@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Link } from 'waku/router';
+import { Link } from 'waku/router/client';
 
 type SearchResult = {
   file: string;

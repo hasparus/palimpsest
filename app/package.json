@@ -10,17 +10,24 @@
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "react": "~19.2.4",
+    "react-dom": "~19.2.4",
+    "react-server-dom-webpack": "~19.2.4",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
-    "waku": "^0.21.19"
+    "waku": "~1.0.0-alpha.3"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.1.8",
-    "@types/react": "^19.1.5",
-    "@types/react-dom": "^19.1.5",
-    "tailwindcss": "^4.1.8",
-    "typescript": "^5.8.3"
+    "@tailwindcss/vite": "^4.1.18",
+    "@types/react": "~19.2.10",
+    "@types/react-dom": "~19.2.3",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "react": "$react",
+    "react-dom": "$react-dom",
+    "react-server-dom-webpack": "$react-server-dom-webpack",
+    "vite": "^7.2.0"
   }
 }
