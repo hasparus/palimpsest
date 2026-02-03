@@ -5,6 +5,11 @@ MAX_ITERATIONS=${1:-15}
 ITERATION=0
 DONE_MARKER="RALPH_STATUS:done"
 LOG_FILE="ralph.log"
+# Supported engines (set RALPH_ENGINE):
+#   gemini  — gemini CLI with --yolo (default)
+#   opencode — opencode run (free Kimi model)
+MODEL="${RALPH_MODEL:-gemini-2.5-pro}"
+ENGINE="${RALPH_ENGINE:-gemini}"
 
 PROMPT='You are building the "palimpsest" project. Read PLAN.md for full context.
 The current focus is the "Vault Viewer — Waku App" section (stories 15-20).
@@ -25,20 +30,31 @@ Rules:
 
 echo "=== Palimpsest Ralph Loop ===" | tee "$LOG_FILE"
 echo "Max iterations: $MAX_ITERATIONS" | tee -a "$LOG_FILE"
+echo "Model: $MODEL" | tee -a "$LOG_FILE"
 echo "" | tee -a "$LOG_FILE"
 
 while [ $ITERATION -lt $MAX_ITERATIONS ]; do
     ITERATION=$((ITERATION + 1))
     echo "--- Iteration $ITERATION/$MAX_ITERATIONS ($(date '+%H:%M:%S')) ---" | tee -a "$LOG_FILE"
 
-    # Run amp in execute mode, non-interactive
-    OUTPUT=$(amp --dangerously-allow-all -x "$PROMPT" 2>&1) || true
+    # Run the chosen engine
+    case "$ENGINE" in
+      gemini)
+        OUTPUT=$(gemini -m "$MODEL" --yolo "$PROMPT" 2>&1) || true
+        ;;
+      opencode)
+        OUTPUT=$(opencode run "$PROMPT" 2>&1) || true
+        ;;
+      *)
+        echo "Unknown engine: $ENGINE" >&2; exit 1
+        ;;
+    esac
 
     echo "$OUTPUT" >> "$LOG_FILE"
     echo "$OUTPUT" | tail -20
     echo ""
 
-    # Git checkpoint (amp may have already committed, but ensure nothing is left)
+    # Git checkpoint
     if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null || [ -n "$(git ls-files --others --exclude-standard)" ]; then
         git add -A
         git commit -m "ralph: checkpoint iteration $ITERATION" --no-verify 2>/dev/null || true
