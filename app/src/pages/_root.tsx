@@ -6,14 +6,14 @@ export default async function RootElement({
   children: ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Palimpsest</title>
-        <meta name="description" content="AI conversation vault viewer" />
+        <meta name="description" content="AI conversation vault" />
       </head>
-      <body className="min-h-screen bg-neutral-950 text-neutral-100 font-mono antialiased">
+      <body className="min-h-screen bg-parchment-50 text-ink font-mono antialiased">
         {children}
       </body>
     </html>

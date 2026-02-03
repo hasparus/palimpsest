@@ -1,6 +1,5 @@
 
 import { readFile, readdir } from 'node:fs/promises';
-import { Link } from 'waku/router';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -19,58 +18,76 @@ export default async function DistilledPage() {
 
   const summariesDir = await readdir('./private/distilled/summaries').catch(() => []);
   const periodSummaries: { name: string; content: string }[] = [];
-  for (const file of summariesDir.filter(f => f.endsWith('.md')).sort()) {
+  for (const file of summariesDir.filter(f => f.endsWith('.md')).sort().reverse()) {
     const content = await getDistilledFile(`summaries/${file}`);
     if (content) periodSummaries.push({ name: file.replace('.md', ''), content });
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4">
-      <div className="prose prose-invert">
-        {summary && (
-          <div className="mb-8 p-6 bg-neutral-900 rounded-lg">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{summary}</ReactMarkdown>
-          </div>
-        )}
+    <div className="max-w-2xl mx-auto py-6 px-6">
+      <div className="mb-6">
+        <h1 className="text-lg font-medium tracking-tight">Distilled</h1>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {themes && (
-            <details className="p-6 bg-neutral-900 rounded-lg">
-              <summary className="font-bold text-xl cursor-pointer">Themes</summary>
-              <div className="mt-4">
+      {summary && (
+        <section className="mb-8 pb-8 border-b border-parchment-200">
+          <div className="prose-manuscript text-sm text-ink-light">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {summary.replace(/^Here['']s a thematic analysis[^:]*:\s*/i, '')}
+            </ReactMarkdown>
+          </div>
+        </section>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        {themes && (
+          <section>
+            <details open>
+              <summary className="text-xs font-medium text-ink-muted uppercase tracking-widest mb-4 pb-2 border-b border-parchment-200">
+                Themes
+              </summary>
+              <div className="prose-manuscript text-sm text-ink-light mt-4">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{themes}</ReactMarkdown>
               </div>
             </details>
-          )}
+          </section>
+        )}
 
-          {knowledge && (
-            <details className="p-6 bg-neutral-900 rounded-lg">
-              <summary className="font-bold text-xl cursor-pointer">Knowledge</summary>
-              <div className="mt-4">
+        {knowledge && (
+          <section>
+            <details open>
+              <summary className="text-xs font-medium text-ink-muted uppercase tracking-widest mb-4 pb-2 border-b border-parchment-200">
+                Knowledge
+              </summary>
+              <div className="prose-manuscript text-sm text-ink-light mt-4">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{knowledge}</ReactMarkdown>
               </div>
             </details>
-          )}
-        </div>
-
-        {periodSummaries.length > 0 && (
-          <div className="mt-8">
-            <h2 className="text-2xl font-bold mb-4">Period Summaries</h2>
-            <div className="space-y-4">
-              {periodSummaries.map(({ name, content }) => (
-                <details key={name} className="p-6 bg-neutral-900 rounded-lg">
-                  <summary className="font-bold text-lg cursor-pointer">{name}</summary>
-                  <div className="mt-4">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {content}
-                    </ReactMarkdown>
-                  </div>
-                </details>
-              ))}
-            </div>
-          </div>
+          </section>
         )}
       </div>
+
+      {periodSummaries.length > 0 && (
+        <section>
+          <h2 className="text-xs font-medium text-ink-muted uppercase tracking-widest mb-6 pb-2 border-b border-parchment-200">
+            Period summaries
+          </h2>
+          <div className="space-y-6">
+            {periodSummaries.map(({ name, content }) => (
+              <details key={name}>
+                <summary className="text-sm text-ink-light hover:text-ink transition-colors cursor-pointer py-1">
+                  {name}
+                </summary>
+                <div className="prose-manuscript text-sm text-ink-light mt-3 pl-4 border-l border-parchment-200">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {content}
+                  </ReactMarkdown>
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

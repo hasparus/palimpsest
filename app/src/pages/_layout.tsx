@@ -11,28 +11,37 @@ export default async function RootLayout({
 }) {
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-neutral-800 bg-neutral-900/50 backdrop-blur-sm sticky top-0 z-10">
-        <nav className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-6">
-          <Link to="/" className="text-lg font-bold tracking-tight hover:text-neutral-300 transition-colors">
-            Palimpsest
+      <header className="border-b border-parchment-200 sticky top-0 z-10 header-surface">
+        <nav className="max-w-3xl mx-auto px-6 py-4 flex items-center gap-8">
+          <Link
+            to="/"
+            className="text-sm font-medium tracking-widest text-ink-light hover:text-ink transition-colors"
+          >
+            palimpsest
           </Link>
-          <div className="flex items-center gap-4 text-sm">
-            <Link to="/" className="text-neutral-400 hover:text-neutral-100 transition-colors">
-              Home
-            </Link>
-            <Link to="/distilled" className="text-neutral-400 hover:text-neutral-100 transition-colors">
+          <div className="flex items-center gap-6 text-xs tracking-wide">
+            <Link
+              to="/distilled"
+              className="text-ink-muted hover:text-ink transition-colors"
+            >
               Distilled
             </Link>
           </div>
           <div className="flex-1" />
-          <div className="w-64">
-            <Search />
-          </div>
+          <Search />
         </nav>
       </header>
-      <main className="flex-1">
+      <main className="flex-1 animate-in">
         {children}
       </main>
+      <footer className="border-t border-parchment-200 py-4 mt-16">
+        <div className="max-w-3xl mx-auto px-6 flex items-center gap-6 text-xs text-ink-faint">
+          <Link to="/" className="hover:text-ink-muted transition-colors">Archive</Link>
+          <Link to="/distilled" className="hover:text-ink-muted transition-colors">Distilled</Link>
+          <span className="flex-1" />
+          <kbd className="text-[10px] tracking-wide">&#8984;K search</kbd>
+        </div>
+      </footer>
     </div>
   );
 }

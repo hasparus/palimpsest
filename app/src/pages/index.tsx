@@ -27,7 +27,7 @@ async function getConversations(): Promise<Conversation[]> {
 
     conversations.push({
       slug: file.replace('.md', ''),
-      title: title.slice(0, 80) + (title.length > 80 ? '…' : ''),
+      title: title.slice(0, 80) + (title.length > 80 ? '\u2026' : ''),
       source: data.source ?? 'unknown',
       date: data.date ?? '',
       tags: Array.isArray(data.tags) ? data.tags : [],
@@ -48,11 +48,36 @@ function groupByMonth(convos: Conversation[]): Map<string, Conversation[]> {
   return groups;
 }
 
-const sourceColors: Record<string, string> = {
-  chatgpt: 'bg-emerald-900 text-emerald-300',
-  claude: 'bg-orange-900 text-orange-300',
-  'claude-code': 'bg-violet-900 text-violet-300',
-  codex: 'bg-blue-900 text-blue-300',
+function formatMonth(ym: string): string {
+  if (ym === 'Unknown') return ym;
+  if (!/^\d{4}-\d{2}$/.test(ym)) return ym;
+  const [year, month] = ym.split('-');
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const idx = parseInt(month!, 10) - 1;
+  return months[idx] ? `${months[idx]} ${year}` : ym;
+}
+
+function formatDay(dateStr: string): string {
+  if (!dateStr || !/^\d{4}-\d{2}-\d{2}/.test(dateStr)) return '';
+  const d = new Date(dateStr + 'T00:00:00');
+  if (isNaN(d.getTime())) return '';
+  return d.getDate().toString();
+}
+
+const sourceLabel: Record<string, string> = {
+  chatgpt: 'gpt',
+  claude: 'claude',
+  'claude-web': 'claude.ai',
+  'claude-code': 'claude-code',
+  codex: 'codex',
+};
+
+const sourceColor: Record<string, string> = {
+  chatgpt: 'text-accent-chatgpt',
+  claude: 'text-accent-claude',
+  'claude-web': 'text-accent-claude',
+  'claude-code': 'text-accent-code',
+  codex: 'text-accent-codex',
 };
 
 export default async function HomePage() {
@@ -60,51 +85,38 @@ export default async function HomePage() {
   const grouped = groupByMonth(conversations);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Conversations</h1>
-      <p className="text-neutral-500 text-sm mb-8">
-        {conversations.length} conversations in vault
-      </p>
+    <div className="max-w-3xl mx-auto px-6 py-6">
+      <div className="mb-6 flex items-baseline gap-3">
+        <h1 className="text-lg font-medium tracking-tight">Archive</h1>
+        <span className="text-xs text-ink-faint">{conversations.length}</span>
+      </div>
 
       {[...grouped.entries()].map(([month, convos]) => (
-        <section key={month} className="mb-8">
-          <h2 className="text-sm font-semibold text-neutral-500 uppercase tracking-wide mb-3 sticky top-14 bg-neutral-950 py-2">
-            {month}
+        <section key={month} className="mb-6">
+          <h2 className="text-xs font-medium text-ink-muted uppercase tracking-widest mb-3 pb-2 border-b border-parchment-200">
+            {formatMonth(month)}
           </h2>
-          <div className="space-y-2">
+          <div className="space-y-0">
             {convos.map((c) => (
               <Link
                 key={c.slug}
                 to={`/c/${c.slug}`}
-                className="block p-3 rounded border border-neutral-800 hover:border-neutral-600 hover:bg-neutral-900/50 transition-colors"
+                className="group flex items-baseline gap-4 py-2 border-b border-parchment-100 hover:bg-parchment-100/50 transition-colors -mx-3 px-3"
               >
-                <div className="flex items-start gap-3">
-                  <span
-                    className={`text-xs px-2 py-0.5 rounded ${sourceColors[c.source] ?? 'bg-neutral-800 text-neutral-400'}`}
-                  >
-                    {c.source}
-                  </span>
-                  <span className="text-xs text-neutral-500">{c.date}</span>
-                </div>
-                <h3 className="mt-2 text-sm text-neutral-200 line-clamp-2">
+                <span className="text-xs text-ink-faint tabular-nums w-5 shrink-0 text-right">
+                  {formatDay(c.date)}
+                </span>
+                <span className={`hidden sm:inline text-xs w-[11ch] shrink-0 ${sourceColor[c.source] ?? 'text-ink-faint'}`}>
+                  {sourceLabel[c.source] ?? c.source}
+                </span>
+                <span className={`sm:hidden w-1.5 h-1.5 rounded-full shrink-0 ${sourceColor[c.source]?.replace('text-', 'bg-') ?? 'bg-ink-faint'}`} />
+                <span className="text-sm text-ink-light group-hover:text-ink transition-colors truncate">
                   {c.title}
-                </h3>
+                </span>
                 {c.tags.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {c.tags.slice(0, 5).map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-xs px-1.5 py-0.5 bg-neutral-800 text-neutral-400 rounded"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                    {c.tags.length > 5 && (
-                      <span className="text-xs text-neutral-500">
-                        +{c.tags.length - 5}
-                      </span>
-                    )}
-                  </div>
+                  <span className="hidden md:inline text-xs text-ink-faint ml-auto shrink-0">
+                    {c.tags.slice(0, 2).join(', ')}
+                  </span>
                 )}
               </Link>
             ))}

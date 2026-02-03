@@ -1,9 +1,357 @@
 @import 'tailwindcss';
 
+/* --- Font faces (self-hosted) --- */
+
+@font-face {
+  font-family: 'Drafting Mono';
+  src: url('/fonts/DraftingMono-ExtraLight.woff2') format('woff2');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Drafting Mono';
+  src: url('/fonts/DraftingMono-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Drafting Mono';
+  src: url('/fonts/DraftingMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Drafting Mono';
+  src: url('/fonts/DraftingMono-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Drafting Mono';
+  src: url('/fonts/DraftingMono-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Drafting Mono';
+  src: url('/fonts/DraftingMono-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Drafting Mono';
+  src: url('/fonts/DraftingMono-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --- Adaptive color tokens --- */
+
+:root {
+  --p-50: #faf8f5;
+  --p-100: #f3efe8;
+  --p-200: #e8e1d5;
+  --p-300: #d4c9b8;
+  --p-400: #b5a68f;
+  --p-500: #9a8a70;
+  --p-600: #7a6c57;
+  --p-700: #5c5142;
+  --p-800: #3d362d;
+  --p-900: #252018;
+  --p-950: #141210;
+  --c-ink: #1a1714;
+  --c-ink-light: #3d362d;
+  --c-ink-muted: #7a6c57;
+  --c-ink-faint: #b5a68f;
+  --c-accent-claude: #c4704b;
+  --c-accent-chatgpt: #6b8f71;
+  --c-accent-code: #7b7fa3;
+  --c-accent-codex: #7a9ab5;
+  --c-selection-bg: #d4c9b8;
+  --c-selection-text: #1a1714;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --p-50: #1a1714;
+    --p-100: #1c1917;
+    --p-200: #292420;
+    --p-300: #3d362d;
+    --p-400: #5c5142;
+    --p-500: #7a6c57;
+    --p-600: #9a8a70;
+    --p-700: #b5a68f;
+    --p-800: #d4c9b8;
+    --p-900: #f3efe8;
+    --p-950: #faf8f5;
+    --c-ink: #f3efe8;
+    --c-ink-light: #d4c9b8;
+    --c-ink-muted: #9a8a70;
+    --c-ink-faint: #5c5142;
+    --c-accent-claude: #d9896a;
+    --c-accent-chatgpt: #85ad8b;
+    --c-accent-code: #9b9fc3;
+    --c-accent-codex: #95b6cf;
+    --c-selection-bg: #3d362d;
+    --c-selection-text: #f3efe8;
+  }
+}
+
 @theme {
-  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+  --font-family-mono: 'Drafting Mono', 'SF Mono', Consolas, monospace;
+  --color-parchment-50: var(--p-50);
+  --color-parchment-100: var(--p-100);
+  --color-parchment-200: var(--p-200);
+  --color-parchment-300: var(--p-300);
+  --color-parchment-400: var(--p-400);
+  --color-parchment-500: var(--p-500);
+  --color-parchment-600: var(--p-600);
+  --color-parchment-700: var(--p-700);
+  --color-parchment-800: var(--p-800);
+  --color-parchment-900: var(--p-900);
+  --color-parchment-950: var(--p-950);
+  --color-ink: var(--c-ink);
+  --color-ink-light: var(--c-ink-light);
+  --color-ink-muted: var(--c-ink-muted);
+  --color-ink-faint: var(--c-ink-faint);
+  --color-accent-claude: var(--c-accent-claude);
+  --color-accent-chatgpt: var(--c-accent-chatgpt);
+  --color-accent-code: var(--c-accent-code);
+  --color-accent-codex: var(--c-accent-codex);
 }
 
 body {
   font-family: var(--font-family-mono);
+  font-feature-settings: 'liga' 1, 'calt' 1;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background-color: var(--c-selection-bg);
+  color: var(--c-selection-text);
+}
+
+/* --- Prose styling for markdown content --- */
+
+.prose-manuscript {
+  line-height: 1.75;
+  letter-spacing: 0.01em;
+}
+
+.prose-manuscript h1,
+.prose-manuscript h2,
+.prose-manuscript h3 {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+}
+
+.prose-manuscript h1 { font-size: 1.25rem; }
+.prose-manuscript h2 { font-size: 1.1rem; }
+.prose-manuscript h3 { font-size: 1rem; }
+
+.prose-manuscript p {
+  margin-bottom: 1em;
+}
+
+.prose-manuscript code {
+  font-size: 0.875em;
+  background: var(--p-200);
+  padding: 0.15em 0.35em;
+  border-radius: 2px;
+}
+
+.prose-manuscript pre {
+  background: var(--p-100);
+  border: 1px solid var(--p-200);
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1.5em 0;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.prose-manuscript pre code {
+  background: none;
+  padding: 0;
+}
+
+.prose-manuscript blockquote {
+  border-left: 2px solid var(--p-300);
+  padding-left: 1em;
+  color: var(--c-ink-muted);
+  font-style: italic;
+}
+
+.prose-manuscript ul,
+.prose-manuscript ol {
+  padding-left: 1.5em;
+  margin-bottom: 1em;
+}
+
+.prose-manuscript li {
+  margin-bottom: 0.25em;
+}
+
+.prose-manuscript a {
+  color: var(--c-accent-claude);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--p-300);
+  transition: text-decoration-color 0.2s;
+}
+
+.prose-manuscript a:hover {
+  text-decoration-color: var(--c-accent-claude);
+}
+
+.prose-manuscript table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  font-size: 0.875rem;
+}
+
+.prose-manuscript th,
+.prose-manuscript td {
+  border-bottom: 1px solid var(--p-200);
+  padding: 0.5em 0.75em;
+  text-align: left;
+}
+
+.prose-manuscript th {
+  font-weight: 500;
+  color: var(--c-ink-muted);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.prose-manuscript img {
+  max-width: 100%;
+  border-radius: 2px;
+}
+
+.prose-manuscript hr {
+  border: none;
+  border-top: 1px solid var(--p-200);
+  margin: 2em 0;
+}
+
+/* --- Scrollbar --- */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--p-300) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--p-300);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--p-400);
+}
+
+/* --- Details/summary --- */
+
+details summary {
+  cursor: pointer;
+  user-select: none;
+}
+
+details summary::marker {
+  color: var(--c-ink-faint);
+}
+
+/* --- Header backdrop --- */
+
+.header-surface {
+  background: var(--p-50);
+}
+
+@supports (backdrop-filter: blur(8px)) {
+  .header-surface {
+    background: color-mix(in srgb, var(--p-50) 90%, transparent);
+    backdrop-filter: blur(8px);
+  }
+}
+
+/* --- Animation --- */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dialogIn {
+  from { opacity: 0; transform: translate(-50%, -8px) scale(0.98); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .search-backdrop {
+    animation: backdropIn 0.15s ease-out;
+  }
+
+  .search-dialog {
+    animation: dialogIn 0.2s ease-out;
+  }
+}
+
+/* --- Search dialog --- */
+
+.search-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgb(0 0 0 / 0.4);
+  backdrop-filter: blur(4px);
+}
+
+.search-dialog {
+  position: fixed;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 2rem);
+  max-width: 32rem;
+  background: var(--p-50);
+  border: 1px solid var(--p-200);
+  border-radius: 0.5rem;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  overflow: hidden;
 }
