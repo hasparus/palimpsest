@@ -228,12 +228,12 @@ app/                           # Waku project (separate package.json)
 - [x] Basic responsive layout (sidebar on desktop, hamburger on mobile is NOT needed — keep it simple)
 
 ### 17. Conversation list page
-- [ ] `index.tsx` — server component that reads `private/vault/*.md`
-- [ ] Parse frontmatter from each file (source, date, tags, title from H1)
-- [ ] Sort by date descending
-- [ ] Display as cards/rows: date, source badge, title, tag chips
-- [ ] Link each to `/c/{slug}` (slug = filename without .md)
-- [ ] Group by month with sticky headers
+- [x] `index.tsx` — server component that reads `private/vault/*.md`
+- [x] Parse frontmatter from each file (source, date, tags, title from H1)
+- [x] Sort by date descending
+- [x] Display as cards/rows: date, source badge, title, tag chips
+- [x] Link each to `/c/{slug}` (slug = filename without .md)
+- [x] Group by month with sticky headers
 
 ### 18. Conversation detail page
 - [ ] `c/[slug].tsx` — server component, reads `private/vault/{slug}.md`
