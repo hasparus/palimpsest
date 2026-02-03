@@ -253,11 +253,11 @@ app/                           # Waku project (separate package.json)
 - [x] Integrate into layout header
 
 ### 20. Distilled view
-- [ ] `distilled/index.tsx` — server component reads `private/distilled/`
-- [ ] Renders SUMMARY.md as hero section
-- [ ] Renders themes.md and knowledge.md as expandable sections
-- [ ] Lists period summaries with links/accordions
-- [ ] Simple markdown rendering (same approach as conversation detail)
+- [x] `distilled/index.tsx` — server component reads `private/distilled/`
+- [x] Renders SUMMARY.md as hero section
+- [x] Renders themes.md and knowledge.md as expandable sections
+- [x] Lists period summaries with links/accordions
+- [x] Simple markdown rendering (same approach as conversation detail)
 
 ## Not Doing
 
