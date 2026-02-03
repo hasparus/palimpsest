@@ -9,4 +9,8 @@ dist/
 ralph.log
 test-fixtures/
 .context/
+distilled/
+app/node_modules/
+app/dist/
+app/private/
 package-lock.json

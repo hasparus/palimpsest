@@ -7,15 +7,20 @@ DONE_MARKER="RALPH_STATUS:done"
 LOG_FILE="ralph.log"
 
 PROMPT='You are building the "palimpsest" project. Read PLAN.md for full context.
+The current focus is the "Vault Viewer — Waku App" section (stories 15-20).
 
 Rules:
 - Work on the highest-priority incomplete story (unchecked [ ] items in PLAN.md).
 - After completing a story, mark it [x] in PLAN.md.
-- Run `npx tsx src/cli.ts --help` to verify your code compiles. Run any tests if they exist.
+- Read `app/WAKU-REFERENCE.md` for Waku API patterns before writing any Waku code.
+- The vault is at `./vault/` and distilled output at `./distilled/` (symlinked into app/private/).
+- Search uses `qmd search <query>` CLI (already installed and indexed).
+- Run `cd app && npx waku dev` to verify your code compiles. Kill it after checking.
 - Commit your progress with a descriptive message after each completed story.
 - If ALL stories are complete, output exactly on its own line: RALPH_STATUS:done
 - If you cannot complete a story, document what blocks it in PLAN.md and move to the next.
-- Keep code simple. Use tsx for running TypeScript directly. Use commander for CLI.
+- Keep code simple. Use server components for data access, client components only for interactivity.
+- Use Tailwind v4 for styling. Dark theme preferred. Monospace font for code.
 - Do NOT deploy anything. Do NOT push to remote.'
 
 echo "=== Palimpsest Ralph Loop ===" | tee "$LOG_FILE"

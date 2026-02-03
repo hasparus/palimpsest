@@ -167,6 +167,98 @@ Filter `<environment_context>` content.
 ### 14. qmd setup script
 - [x] `setup-qmd.sh` — one-liner to create collection + context + embed
 
+## Vault Viewer — Waku App
+
+A local web UI to browse the vault and search conversations. Lives in `app/` directory.
+Uses **Waku** (minimal React framework, https://waku.gg) with server components.
+Search is powered by **qmd** CLI (already installed, has vault indexed).
+
+See `app/WAKU-REFERENCE.md` for Waku API reference (routing, layouts, pages, etc).
+
+### Architecture
+
+```
+app/                           # Waku project (separate package.json)
+├── src/
+│   ├── pages/
+│   │   ├── _root.tsx          # html/head/body
+│   │   ├── _layout.tsx        # root layout: header with search, nav
+│   │   ├── index.tsx           # home: conversation list with filters
+│   │   ├── c/
+│   │   │   └── [slug].tsx     # conversation detail (render markdown)
+│   │   ├── distilled/
+│   │   │   └── index.tsx      # distilled summaries, themes, knowledge
+│   │   └── _api/
+│   │       └── search.ts      # GET /search?q=... → calls `qmd search`
+│   ├── components/
+│   │   ├── search.tsx         # client: search input + results dropdown
+│   │   ├── conversation-list.tsx  # server: list with date/source grouping
+│   │   ├── markdown.tsx       # server: render conversation markdown
+│   │   └── filters.tsx        # client: source/date/tag filters
+│   └── styles.css             # tailwind
+├── private/                   # symlink to ../vault
+├── package.json
+├── tsconfig.json
+└── waku.config.ts
+```
+
+### Key decisions
+
+- **Dynamic rendering** for all pages (reads from disk at request time)
+- **Server components** for vault reading (fs access, no client bundle)
+- **Client components** only for search input, filters, interactive bits
+- **qmd CLI** for search (spawn `qmd search <query>` from API endpoint)
+- **gray-matter** for parsing frontmatter from vault .md files (already a dependency in parent)
+- **Tailwind v4** for styling (via `@tailwindcss/vite` plugin)
+- **No database** — reads vault/ and distilled/ directories directly
+- Symlink `app/private/vault` → `../vault` and `app/private/distilled` → `../distilled`
+
+### 15. Scaffold Waku project
+- [x] Run `npm create waku@latest` in `app/` directory (or set up manually)
+- [x] Add dependencies: `gray-matter`, `@tailwindcss/vite`, `tailwindcss`
+- [x] Create `waku.config.ts` with Tailwind plugin
+- [x] Create symlinks: `app/private/vault` → `../vault`, `app/private/distilled` → `../distilled`
+- [x] Verify `waku dev` starts without errors
+- [x] Add `app/node_modules` and `app/dist` to root `.gitignore`
+
+### 16. Root layout + styling
+- [ ] `_root.tsx` — html lang, head, body
+- [ ] `_layout.tsx` — header with app name "Palimpsest", nav links (Home, Distilled), search bar placeholder
+- [ ] `styles.css` — Tailwind import, dark theme, monospace body, minimal custom styles
+- [ ] Basic responsive layout (sidebar on desktop, hamburger on mobile is NOT needed — keep it simple)
+
+### 17. Conversation list page
+- [ ] `index.tsx` — server component that reads `private/vault/*.md`
+- [ ] Parse frontmatter from each file (source, date, tags, title from H1)
+- [ ] Sort by date descending
+- [ ] Display as cards/rows: date, source badge, title, tag chips
+- [ ] Link each to `/c/{slug}` (slug = filename without .md)
+- [ ] Group by month with sticky headers
+
+### 18. Conversation detail page
+- [ ] `c/[slug].tsx` — server component, reads `private/vault/{slug}.md`
+- [ ] Parse frontmatter + body
+- [ ] Render metadata header: date, source, model, tags
+- [ ] Render conversation body as HTML (use a simple markdown-to-HTML approach)
+- [ ] Style user/assistant messages differently (alternating backgrounds)
+- [ ] Back link to home
+- [ ] Show related conversations from ## Related section as links
+
+### 19. Search API + UI
+- [ ] `_api/search.ts` — GET endpoint, reads `q` from query string
+- [ ] Spawns `qmd search <q>` subprocess, parses output
+- [ ] Returns JSON: `{ results: { file: string, snippet: string, score: number }[] }`
+- [ ] `components/search.tsx` — client component with debounced input
+- [ ] Displays results as dropdown/list with links to `/c/{slug}`
+- [ ] Integrate into layout header
+
+### 20. Distilled view
+- [ ] `distilled/index.tsx` — server component reads `private/distilled/`
+- [ ] Renders SUMMARY.md as hero section
+- [ ] Renders themes.md and knowledge.md as expandable sections
+- [ ] Lists period summaries with links/accordions
+- [ ] Simple markdown rendering (same approach as conversation detail)
+
 ## Not Doing
 
 - **EffectTS**: Overkill. This is a file-in → file-out CLI. Simple try/catch is fine.

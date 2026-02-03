@@ -1,11 +1,4 @@
 === Palimpsest Ralph Loop ===
-Max iterations: 10
+Max iterations: 15
 
---- Iteration 1/10 (01:44:45) ---
-Error: stream ended without producing a Message with role=assistant
-[ralph] Not done yet. Continuing...
---- Iteration 2/10 (01:49:45) ---
-No unchecked items remain. All stories are complete.
-
-RALPH_STATUS:done
-=== Ralph complete after 2 iterations ===
+--- Iteration 1/15 (06:01:21) ---
