@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 import { Link } from 'waku';
 import '../styles.css';
 
+import Search from '../components/search.js';
+
 export default async function RootLayout({
   children,
 }: {
@@ -23,11 +25,8 @@ export default async function RootLayout({
             </Link>
           </div>
           <div className="flex-1" />
-          <div className="text-neutral-500 text-sm">
-            {/* Search placeholder - will be replaced with client component */}
-            <span className="px-3 py-1.5 bg-neutral-800 rounded border border-neutral-700 text-neutral-500">
-              Search...
-            </span>
+          <div className="w-64">
+            <Search />
           </div>
         </nav>
       </header>

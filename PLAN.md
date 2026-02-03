@@ -245,12 +245,12 @@ app/                           # Waku project (separate package.json)
 - [x] Show related conversations from ## Related section as links
 
 ### 19. Search API + UI
-- [ ] `_api/search.ts` — GET endpoint, reads `q` from query string
-- [ ] Spawns `qmd search <q>` subprocess, parses output
-- [ ] Returns JSON: `{ results: { file: string, snippet: string, score: number }[] }`
-- [ ] `components/search.tsx` — client component with debounced input
-- [ ] Displays results as dropdown/list with links to `/c/{slug}`
-- [ ] Integrate into layout header
+- [x] `_api/search.ts` — GET endpoint, reads `q` from query string
+- [x] Spawns `qmd search <q>` subprocess, parses output
+- [x] Returns JSON: `{ results: { file: string, snippet: string, score: number }[] }`
+- [x] `components/search.tsx` — client component with debounced input
+- [x] Displays results as dropdown/list with links to `/c/{slug}`
+- [x] Integrate into layout header
 
 ### 20. Distilled view
 - [ ] `distilled/index.tsx` — server component reads `private/distilled/`
