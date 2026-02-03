@@ -1,9 +1,9 @@
 export default async function HomePage() {
   return (
-    <main className="min-h-screen bg-neutral-950 text-neutral-100 font-mono p-8">
-      <h1 className="text-2xl font-bold mb-4">Palimpsest</h1>
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-4">Conversations</h1>
       <p className="text-neutral-400">Vault viewer coming soon.</p>
-    </main>
+    </div>
   );
 }
 

@@ -222,10 +222,10 @@ app/                           # Waku project (separate package.json)
 - [x] Add `app/node_modules` and `app/dist` to root `.gitignore`
 
 ### 16. Root layout + styling
-- [ ] `_root.tsx` — html lang, head, body
-- [ ] `_layout.tsx` — header with app name "Palimpsest", nav links (Home, Distilled), search bar placeholder
-- [ ] `styles.css` — Tailwind import, dark theme, monospace body, minimal custom styles
-- [ ] Basic responsive layout (sidebar on desktop, hamburger on mobile is NOT needed — keep it simple)
+- [x] `_root.tsx` — html lang, head, body
+- [x] `_layout.tsx` — header with app name "Palimpsest", nav links (Home, Distilled), search bar placeholder
+- [x] `styles.css` — Tailwind import, dark theme, monospace body, minimal custom styles
+- [x] Basic responsive layout (sidebar on desktop, hamburger on mobile is NOT needed — keep it simple)
 
 ### 17. Conversation list page
 - [ ] `index.tsx` — server component that reads `private/vault/*.md`
