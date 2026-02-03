@@ -236,13 +236,13 @@ app/                           # Waku project (separate package.json)
 - [x] Group by month with sticky headers
 
 ### 18. Conversation detail page
-- [ ] `c/[slug].tsx` — server component, reads `private/vault/{slug}.md`
-- [ ] Parse frontmatter + body
-- [ ] Render metadata header: date, source, model, tags
-- [ ] Render conversation body as HTML (use a simple markdown-to-HTML approach)
-- [ ] Style user/assistant messages differently (alternating backgrounds)
-- [ ] Back link to home
-- [ ] Show related conversations from ## Related section as links
+- [x] `c/[slug].tsx` — server component, reads `private/vault/{slug}.md`
+- [x] Parse frontmatter + body
+- [x] Render metadata header: date, source, model, tags
+- [x] Render conversation body as HTML (use a simple markdown-to-HTML approach)
+- [x] Style user/assistant messages differently (alternating backgrounds)
+- [x] Back link to home
+- [x] Show related conversations from ## Related section as links
 
 ### 19. Search API + UI
 - [ ] `_api/search.ts` — GET endpoint, reads `q` from query string
